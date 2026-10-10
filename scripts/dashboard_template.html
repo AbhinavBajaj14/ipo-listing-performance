@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IPO Listing Performance</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page:        #f9f9f7;
+    --surface:     #fcfcfb;
+    --ink:         #0b0b0b;
+    --ink2:        #52514e;
+    --muted:       #898781;
+    --grid:        #e1e0d9;
+    --baseline:    #c3c2b7;
+    --border:      rgba(11,11,11,0.10);
+    --s1:          #2a78d6;
+    --s2:          #eb6834;
+    --pos:         #2a78d6;
+    --neg:         #e34948;
+    --mid:         #f0efec;
+    --good:        #0ca30c;
+    --critical:    #d03b3b;
+    --warnbg:      #fff8e6;
+    --warnink:     #7a5a00;
+    --warnline:    #fab219;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7;
+      --muted: #898781; --grid: #2c2c2a; --baseline: #383835;
+      --border: rgba(255,255,255,0.10);
+      --s1: #3987e5; --s2: #d95926; --pos: #3987e5; --neg: #e66767;
+      --mid: #383835; --good: #0ca30c; --critical: #d03b3b;
+      --warnbg: #2a2208; --warnink: #f0d79a; --warnline: #fab219;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7;
+    --muted: #898781; --grid: #2c2c2a; --baseline: #383835;
+    --border: rgba(255,255,255,0.10);
+    --s1: #3987e5; --s2: #d95926; --pos: #3987e5; --neg: #e66767;
+    --mid: #383835; --good: #0ca30c; --critical: #d03b3b;
+    --warnbg: #2a2208; --warnink: #f0d79a; --warnline: #fab219;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink);
+    font: 15px/1.5 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 16px 64px; }
+
+  header h1 { margin: 0 0 4px; font-size: 1.6rem; letter-spacing: -0.015em; }
+  header p  { margin: 0; color: var(--ink2); font-size: 0.9rem; }
+  .meta { margin-top: 10px; color: var(--muted); font-size: 0.78rem;
+          font-variant-numeric: tabular-nums; }
+
+  .banner {
+    margin: 20px 0 0; padding: 12px 14px; border-radius: 10px;
+    background: var(--warnbg); color: var(--warnink);
+    border: 1px solid var(--border); border-left: 3px solid var(--warnline);
+    font-size: 0.85rem;
+  }
+  .banner strong { font-weight: 650; }
+
+  .tiles { display: grid; gap: 12px; margin: 24px 0 8px;
+           grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  .tile { background: var(--surface); border: 1px solid var(--border);
+          border-radius: 12px; padding: 16px 18px; }
+  .tile .k { color: var(--ink2); font-size: 0.74rem; text-transform: uppercase;
+             letter-spacing: 0.06em; font-weight: 600; }
+  .tile .v { font-size: 1.85rem; font-weight: 620; letter-spacing: -0.02em;
+             margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .tile .s { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+
+  .grid { display: grid; gap: 16px; margin-top: 16px; }
+  @media (min-width: 880px) { .grid.two { grid-template-columns: 1fr 1fr; } }
+
+  .card { background: var(--surface); border: 1px solid var(--border);
+          border-radius: 12px; padding: 18px 18px 12px; min-width: 0; }
+  .card h2 { margin: 0 0 2px; font-size: 1rem; font-weight: 620;
+             letter-spacing: -0.01em; }
+  .card p.sub { margin: 0 0 14px; color: var(--ink2); font-size: 0.83rem; }
+  .card figure { margin: 0; }
+  figcaption { color: var(--muted); font-size: 0.76rem; margin-top: 8px; }
+
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .ax   { font-size: 11px; fill: var(--muted); }
+  .axl  { font-size: 11px; fill: var(--ink2); font-weight: 560; }
+  .dl   { font-size: 11px; fill: var(--ink2); font-weight: 600;
+          font-variant-numeric: tabular-nums; }
+  .gl   { stroke: var(--grid); stroke-width: 1; }
+  .bl   { stroke: var(--baseline); stroke-width: 1; }
+
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 0 0 10px;
+            font-size: 0.8rem; color: var(--ink2); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+
+  .toggle { background: none; border: 1px solid var(--border); color: var(--ink2);
+            border-radius: 7px; padding: 4px 10px; font-size: 0.76rem;
+            cursor: pointer; font-family: inherit; }
+  .toggle:hover { color: var(--ink); }
+  .cardhead { display: flex; justify-content: space-between; align-items: start;
+              gap: 12px; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.8rem;
+          font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 5px 8px;
+           border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--ink2); font-weight: 600; }
+  .hidden { display: none; }
+
+  #tip { position: fixed; pointer-events: none; opacity: 0; z-index: 9;
+         background: var(--surface); color: var(--ink);
+         border: 1px solid var(--border); border-radius: 8px;
+         padding: 7px 10px; font-size: 0.78rem; max-width: 240px;
+         box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+         transition: opacity 90ms linear; font-variant-numeric: tabular-nums; }
+  #tip b { font-weight: 620; }
+
+  footer { margin-top: 32px; color: var(--muted); font-size: 0.78rem;
+           line-height: 1.7; }
+  footer code { font-size: 0.95em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>IPO Listing Performance</h1>
+    <p>Indian mainboard IPOs — what predicts a listing-day gain, and whether it lasts.</p>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div id="banner"></div>
+  <div class="tiles" id="tiles"></div>
+
+  <div class="grid two">
+    <section class="card">
+      <div class="cardhead">
+        <div>
+          <h2>How often is the listing gain negative?</h2>
+          <p class="sub">Distribution of listing-day gain against the issue price.</p>
+        </div>
+        <button class="toggle" data-table="t-hist">Table</button>
+      </div>
+      <figure><div id="c-hist"></div>
+        <figcaption>Bars left of zero are issues that listed below their issue price.</figcaption>
+      </figure>
+      <div id="t-hist" class="hidden"></div>
+    </section>
+
+    <section class="card">
+      <div class="cardhead">
+        <div>
+          <h2>Does demand predict the gain?</h2>
+          <p class="sub">Total subscription (log scale) against listing-day gain.</p>
+        </div>
+        <button class="toggle" data-table="t-scatter">Table</button>
+      </div>
+      <figure><div id="c-scatter"></div>
+        <figcaption>One point per listed issue. Hover for the company.</figcaption>
+      </figure>
+      <div id="t-scatter" class="hidden"></div>
+    </section>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <div class="cardhead">
+        <div>
+          <h2>Median listing gain by sector</h2>
+          <p class="sub">Ranked. Sectors with fewer than 8 issues are marked — those medians are noise.</p>
+        </div>
+        <button class="toggle" data-table="t-sector">Table</button>
+      </div>
+      <figure><div id="c-sector"></div>
+        <figcaption>Median, not mean: one 150% debut would drag an average upward on its own.</figcaption>
+      </figure>
+      <div id="t-sector" class="hidden"></div>
+    </section>
+  </div>
+
+  <div class="grid two">
+    <section class="card">
+      <div class="cardhead">
+        <div>
+          <h2>Does the gain survive?</h2>
+          <p class="sub">Median gain over the issue price, at listing and after.</p>
+        </div>
+        <button class="toggle" data-table="t-decay">Table</button>
+      </div>
+      <figure><div id="c-decay"></div>
+        <figcaption>The single most useful chart here: the listing-day number is not the return.</figcaption>
+      </figure>
+      <div id="t-decay" class="hidden"></div>
+    </section>
+
+    <section class="card">
+      <div class="cardhead">
+        <div>
+          <h2>Or is it just the market?</h2>
+          <p class="sub">Quarterly average gain against the rolling average of the preceding ten listings.</p>
+        </div>
+        <button class="toggle" data-table="t-quarter">Table</button>
+      </div>
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--s1)"></i>Quarterly average</span>
+        <span><i class="swatch" style="background:var(--s2)"></i>Regime (prior 10 listings)</span>
+      </div>
+      <figure><div id="c-quarter"></div>
+        <figcaption>Where the two track each other, conditions are doing the work — not the issue.</figcaption>
+      </figure>
+      <div id="t-quarter" class="hidden"></div>
+    </section>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+<div id="tip"></div>
+
+<script>
+const DATA = /*__DATA__*/null;
+
+/* ---------- tiny svg helpers ---------- */
+const E = s => String(s).replace(/[&<>"]/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const svg = (w, h, body) =>
+  `<svg viewBox="0 0 ${w} ${h}" role="img" preserveAspectRatio="xMidYMid meet">${body}</svg>`;
+const nice = v => (v > 0 ? '+' : '') + v.toFixed(1) + '%';
+
+const tip = document.getElementById('tip');
+function bindTips(root) {
+  root.querySelectorAll('[data-tip]').forEach(el => {
+    el.addEventListener('mouseenter', e => {
+      tip.innerHTML = el.getAttribute('data-tip');
+      tip.style.opacity = 1;
+    });
+    el.addEventListener('mousemove', e => {
+      const pad = 14;
+      let x = e.clientX + pad, y = e.clientY + pad;
+      const r = tip.getBoundingClientRect();
+      if (x + r.width > innerWidth - 8) x = e.clientX - r.width - pad;
+      if (y + r.height > innerHeight - 8) y = e.clientY - r.height - pad;
+      tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    });
+    el.addEventListener('mouseleave', () => { tip.style.opacity = 0; });
+  });
+}
+
+function table(id, cols, rows) {
+  document.getElementById(id).innerHTML =
+    '<table><thead><tr>' + cols.map(c => `<th>${E(c)}</th>`).join('') +
+    '</tr></thead><tbody>' + rows.map(r =>
+      '<tr>' + r.map(c => `<td>${E(c)}</td>`).join('') + '</tr>').join('') +
+    '</tbody></table>';
+}
+document.querySelectorAll('.toggle').forEach(b => {
+  b.addEventListener('click', () => {
+    const t = document.getElementById(b.dataset.table);
+    const fig = b.closest('.card').querySelector('figure');
+    const show = t.classList.contains('hidden');
+    t.classList.toggle('hidden', !show);
+    fig.classList.toggle('hidden', show);
+    b.textContent = show ? 'Chart' : 'Table';
+  });
+});
+
+/* ---------- header, banner, tiles ---------- */
+const k = DATA.kpi;
+document.getElementById('meta').textContent =
+  `${k.n_listed} listed issues · generated ${DATA.generated}`;
+
+if (DATA.is_synthetic) {
+  document.getElementById('banner').innerHTML =
+    `<div class="banner"><strong>Synthetic data.</strong> Every figure on this page
+     comes from <code>gen_sample_data.py</code>, not from real IPOs. It exists to
+     prove the pipeline runs and the queries detect signals that were planted on
+     purpose. None of it is a finding about any real issue.</div>`;
+}
+
+const tiles = [
+  ['Median listing gain', nice(k.median_gain), `across ${k.n_listed} issues`],
+  ['Listed above issue price', k.hit_rate + '%', 'the hit rate'],
+  ['Median gain, +1 month', nice(k.median_d30), `${k.n_decay} issues tracked`],
+  ['Faded from day one', k.pct_faded + '%', 'worth less at +1 month'],
+  ['Worst debut', nice(k.worst), 'single issue'],
+];
+document.getElementById('tiles').innerHTML = tiles.map(([a, b, c]) =>
+  `<div class="tile"><div class="k">${E(a)}</div><div class="v">${E(b)}</div>
+   <div class="s">${E(c)}</div></div>`).join('');
+
+/* ---------- 1. histogram ---------- */
+(function () {
+  const d = DATA.histogram, W = 540, H = 240,
+        M = { t: 14, r: 14, b: 34, l: 38 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const rawMax = Math.max(...d.map(b => b.n), 1);
+  // round ticks: pick a step from a 1/2/5 ladder so labels are readable
+  const mag = Math.pow(10, Math.floor(Math.log10(rawMax / 4)));
+  const step = [1, 2, 5, 10].map(m => m * mag).find(s => rawMax / s <= 5) || mag * 10;
+  const maxN = Math.ceil(rawMax / step) * step;
+  const bw = iw / d.length;
+  const y = n => M.t + ih - (n / maxN) * ih;
+  let g = '';
+  for (let v = 0; v <= maxN; v += step) {
+    const yy = y(v);
+    g += `<line class="gl" x1="${M.l}" x2="${M.l + iw}" y1="${yy}" y2="${yy}"/>
+          <text class="ax" x="${M.l - 7}" y="${yy + 4}" text-anchor="end">${v}</text>`;
+  }
+  d.forEach((b, i) => {
+    const x = M.l + i * bw + 1.5, w = Math.max(bw - 3, 1);
+    const h = M.t + ih - y(b.n);
+    const col = b.hi <= 0 ? 'var(--neg)' : 'var(--pos)';
+    if (b.n > 0) g += `<rect x="${x}" y="${y(b.n)}" width="${w}" height="${h}"
+        rx="4" fill="${col}" data-tip="<b>${b.lo}% to ${b.hi}%</b><br>${b.n} issues"/>`;
+    if (i % 2 === 0) g += `<text class="ax" x="${x + w / 2}" y="${H - 16}"
+        text-anchor="middle">${b.lo}</text>`;
+  });
+  const zi = d.findIndex(b => b.lo === 0);
+  if (zi >= 0) {
+    const zx = M.l + zi * bw;
+    g += `<line class="bl" x1="${zx}" x2="${zx}" y1="${M.t}" y2="${M.t + ih}"
+           stroke-dasharray="3 3"/>`;
+  }
+  g += `<line class="bl" x1="${M.l}" x2="${M.l + iw}" y1="${M.t + ih}" y2="${M.t + ih}"/>
+        <text class="axl" x="${M.l + iw / 2}" y="${H - 1}" text-anchor="middle">listing gain (%)</text>`;
+  const el = document.getElementById('c-hist');
+  el.innerHTML = svg(W, H, g); bindTips(el);
+  table('t-hist', ['Gain range', 'Issues'],
+        d.map(b => [`${b.lo}% to ${b.hi}%`, b.n]));
+})();
+
+/* ---------- 2. scatter ---------- */
+(function () {
+  const d = DATA.scatter, W = 540, H = 240,
+        M = { t: 14, r: 16, b: 34, l: 40 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const lx = v => Math.log10(Math.max(v, 0.1));
+  const xs = d.map(p => lx(p.sub)), ys = d.map(p => p.gain);
+  const x0 = Math.floor(Math.min(...xs)), x1 = Math.ceil(Math.max(...xs));
+  const y0 = Math.min(0, Math.floor(Math.min(...ys) / 20) * 20);
+  const y1 = Math.ceil(Math.max(...ys) / 20) * 20;
+  const X = v => M.l + (lx(v) - x0) / (x1 - x0) * iw;
+  const Y = v => M.t + ih - (v - y0) / (y1 - y0) * ih;
+  let g = '';
+  for (let v = y0; v <= y1; v += 20) {
+    g += `<line class="gl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(v)}" y2="${Y(v)}"/>
+          <text class="ax" x="${M.l - 7}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  }
+  g += `<line class="bl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  for (let e = x0; e <= x1; e++) {
+    const v = Math.pow(10, e);
+    g += `<text class="ax" x="${X(v)}" y="${H - 16}" text-anchor="middle">${v < 1 ? v : v + 'x'}</text>`;
+  }
+  d.forEach(p => {
+    g += `<circle cx="${X(p.sub)}" cy="${Y(p.gain)}" r="4.5"
+      fill="var(--s1)" fill-opacity="0.72" stroke="var(--surface)" stroke-width="2"
+      data-tip="<b>${E(p.c)}</b><br>${p.sub}x subscribed<br>${nice(p.gain)} on listing"/>`;
+  });
+  g += `<text class="axl" x="${M.l + iw / 2}" y="${H - 1}" text-anchor="middle">total subscription (times, log)</text>`;
+  const el = document.getElementById('c-scatter');
+  el.innerHTML = svg(W, H, g); bindTips(el);
+  table('t-scatter', ['Company', 'Subscription (x)', 'Listing gain'],
+        d.slice().sort((a, b) => b.gain - a.gain)
+         .map(p => [p.c, p.sub, nice(p.gain)]));
+})();
+
+/* ---------- 3. sector bars ---------- */
+(function () {
+  const d = DATA.sectors, rowH = 26, W = 900,
+        M = { t: 8, r: 70, b: 30, l: 200 };
+  const H = M.t + d.length * rowH + M.b;
+  const iw = W - M.l - M.r;
+  const lo = Math.min(0, ...d.map(s => s.median));
+  const hi = Math.max(0, ...d.map(s => s.median));
+  const pad = (hi - lo) * 0.08 || 1;
+  const X = v => M.l + (v - (lo - pad)) / ((hi + pad) - (lo - pad)) * iw;
+  let g = '';
+  const zx = X(0);
+  d.forEach((s, i) => {
+    const yy = M.t + i * rowH, bh = 14, cy = yy + rowH / 2 - bh / 2;
+    const pos = s.median >= 0;
+    const x = pos ? zx : X(s.median), w = Math.max(Math.abs(X(s.median) - zx), 2);
+    g += `<rect x="${x}" y="${cy}" width="${w}" height="${bh}" rx="4"
+        fill="${pos ? 'var(--pos)' : 'var(--neg)'}"
+        data-tip="<b>${E(s.sector)}</b><br>median ${nice(s.median)}<br>${s.n} issues · ${s.pct_pos}% positive"/>`;
+    g += `<text class="ax" x="${M.l - 10}" y="${yy + rowH / 2 + 4}" text-anchor="end">
+            ${E(s.sector)}${s.thin ? ' *' : ''}</text>`;
+    g += `<text class="dl" x="${pos ? x + w + 8 : x - 8}" y="${yy + rowH / 2 + 4}"
+            text-anchor="${pos ? 'start' : 'end'}">${nice(s.median)}</text>`;
+  });
+  g += `<line class="bl" x1="${zx}" x2="${zx}" y1="${M.t}" y2="${M.t + d.length * rowH}"/>
+        <text class="axl" x="${M.l + iw / 2}" y="${H - 6}" text-anchor="middle">
+          median listing gain (%) · * fewer than 8 issues</text>`;
+  const el = document.getElementById('c-sector');
+  el.innerHTML = svg(W, H, g); bindTips(el);
+  table('t-sector', ['Sector', 'Issues', 'Median gain', '% positive'],
+        d.map(s => [s.sector + (s.thin ? ' (thin sample)' : ''), s.n,
+                    nice(s.median), s.pct_pos + '%']));
+})();
+
+/* ---------- 4. decay slope ---------- */
+(function () {
+  const d = DATA.decay, W = 480, H = 240,
+        M = { t: 26, r: 52, b: 40, l: 44 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const vals = d.map(p => p.v);
+  const y1 = Math.ceil(Math.max(...vals, 0) / 5) * 5 + 2;
+  const y0 = Math.min(0, Math.floor(Math.min(...vals) / 5) * 5);
+  const X = i => M.l + (d.length === 1 ? iw / 2 : i / (d.length - 1) * iw);
+  const Y = v => M.t + ih - (v - y0) / (y1 - y0) * ih;
+  let g = '';
+  for (let v = y0; v <= y1; v += 5) {
+    g += `<line class="gl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(v)}" y2="${Y(v)}"/>
+          <text class="ax" x="${M.l - 7}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  }
+  g += `<line class="bl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  g += `<path d="${d.map((p, i) => (i ? 'L' : 'M') + X(i) + ' ' + Y(p.v)).join(' ')}"
+         fill="none" stroke="var(--s1)" stroke-width="2" stroke-linecap="round"/>`;
+  d.forEach((p, i) => {
+    g += `<circle cx="${X(i)}" cy="${Y(p.v)}" r="5" fill="var(--s1)"
+        stroke="var(--surface)" stroke-width="2"
+        data-tip="<b>${E(p.label)}</b><br>median ${nice(p.v)}"/>`;
+    g += `<text class="dl" x="${X(i)}" y="${Y(p.v) - 13}" text-anchor="middle">${nice(p.v)}</text>`;
+    g += `<text class="ax" x="${X(i)}" y="${H - 18}" text-anchor="middle">${E(p.label)}</text>`;
+  });
+  const drop = d[0].v ? (1 - d[d.length - 1].v / d[0].v) * 100 : 0;
+  g += `<text class="axl" x="${M.l + iw / 2}" y="${H - 2}" text-anchor="middle">
+         ${drop > 0 ? Math.round(drop) + '% of the listing gain is gone by month end' : ''}</text>`;
+  const el = document.getElementById('c-decay');
+  el.innerHTML = svg(W, H, g); bindTips(el);
+  table('t-decay', ['Point', 'Median gain'], d.map(p => [p.label, nice(p.v)]));
+})();
+
+/* ---------- 5. quarterly regime ---------- */
+(function () {
+  const d = DATA.quarters, W = 560, H = 250,
+        M = { t: 14, r: 18, b: 44, l: 40 };
+  if (!d.length) return;
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const all = d.flatMap(q => [q.avg, q.regime]).filter(v => v !== null);
+  const y1 = Math.ceil(Math.max(...all, 0) / 10) * 10;
+  const y0 = Math.min(0, Math.floor(Math.min(...all) / 10) * 10);
+  const X = i => M.l + (d.length === 1 ? iw / 2 : i / (d.length - 1) * iw);
+  const Y = v => M.t + ih - (v - y0) / (y1 - y0) * ih;
+  let g = '';
+  for (let v = y0; v <= y1; v += 10) {
+    g += `<line class="gl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(v)}" y2="${Y(v)}"/>
+          <text class="ax" x="${M.l - 7}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  }
+  g += `<line class="bl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  const line = (key, col) => `<path d="${d.map((q, i) =>
+      (i ? 'L' : 'M') + X(i) + ' ' + Y(q[key])).join(' ')}"
+      fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round"/>`;
+  g += line('regime', 'var(--s2)') + line('avg', 'var(--s1)');
+  d.forEach((q, i) => {
+    g += `<circle cx="${X(i)}" cy="${Y(q.avg)}" r="4" fill="var(--s1)"
+        stroke="var(--surface)" stroke-width="2"
+        data-tip="<b>${E(q.q)}</b><br>${q.n} issues<br>avg ${nice(q.avg)}<br>regime ${nice(q.regime)}"/>`;
+    if (i % 3 === 0) g += `<text class="ax" x="${X(i)}" y="${H - 22}"
+        text-anchor="middle">${E(q.q.slice(0, 7))}</text>`;
+  });
+  g += `<text class="axl" x="${M.l + iw / 2}" y="${H - 4}" text-anchor="middle">listing quarter · gain (%)</text>`;
+  const el = document.getElementById('c-quarter');
+  el.innerHTML = svg(W, H, g); bindTips(el);
+  table('t-quarter', ['Quarter', 'Issues', 'Avg gain', 'Regime'],
+        d.map(q => [q.q, q.n, nice(q.avg), nice(q.regime)]));
+})();
+
+/* ---------- footer ---------- */
+document.getElementById('foot').innerHTML =
+  `Grey market premium, where used anywhere in this project, is <strong>unofficial</strong>
+   — an unregulated indicator, not an exchange figure.<br>
+   Analysis only. Historical listing patterns do not predict any future issue.<br>
+   Built from <code>sql/02_views.sql</code> and <code>sql/03_analysis.sql</code>;
+   rebuild with <code>python scripts/build_dashboard.py</code>.`;
+</script>
+</body>
+</html>

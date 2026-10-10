@@ -1,0 +1,154 @@
+company,nse_symbol,sector,issue_open,issue_close,listing_date,price_band_low,price_band_high,issue_price,issue_size_cr,fresh_issue_cr,ofs_cr,lot_size,status,is_synthetic
+Synthetic Issuer 001 Ltd,SYN001,Capital Goods,2021-01-24,2021-01-26,2021-02-01,254.0,265.0,261.0,723.92,568.48,155.44,75,listed,True
+Synthetic Issuer 002 Ltd,SYN002,Pharmaceuticals,2021-02-08,2021-02-11,2021-02-16,214.0,222.0,219.0,321.83,96.73,225.1,75,listed,True
+Synthetic Issuer 003 Ltd,SYN003,Capital Goods,2021-02-20,2021-02-23,2021-02-26,241.0,257.0,253.0,1783.27,955.18,828.09,75,listed,True
+Synthetic Issuer 004 Ltd,SYN004,Chemicals,2021-02-22,2021-02-25,2021-03-01,376.0,383.0,380.0,393.38,236.94,156.44,75,listed,True
+Synthetic Issuer 005 Ltd,SYN005,Capital Goods,2021-03-02,2021-03-05,2021-03-10,103.0,111.0,108.0,430.45,322.15,108.3,150,listed,True
+Synthetic Issuer 006 Ltd,SYN006,Realty & Infrastructure,2021-03-29,2021-04-01,2021-04-08,96.0,99.0,97.0,369.96,83.36,286.6,150,listed,True
+Synthetic Issuer 007 Ltd,SYN007,Information Technology,2021-04-07,2021-04-10,2021-04-13,222.0,236.0,230.0,1244.29,301.57,942.72,75,listed,True
+Synthetic Issuer 008 Ltd,SYN008,Textiles,2021-05-08,2021-05-11,2021-05-14,1281.0,1349.0,1346.0,563.89,331.83,232.06,15,listed,True
+Synthetic Issuer 009 Ltd,SYN009,Pharmaceuticals,2021-05-23,2021-05-25,2021-05-28,85.0,90.0,89.0,1136.83,1037.42,99.41,150,listed,True
+Synthetic Issuer 010 Ltd,SYN010,Consumer Durables,2021-05-26,2021-05-28,2021-05-31,169.0,179.0,175.0,1779.13,832.79,946.34,75,listed,True
+Synthetic Issuer 011 Ltd,SYN011,Healthcare Services,2021-07-25,2021-07-28,2021-08-05,236.0,250.0,248.0,690.51,151.57,538.94,75,listed,True
+Synthetic Issuer 012 Ltd,SYN012,Textiles,2021-07-26,2021-07-28,2021-08-03,77.0,83.0,82.0,555.67,93.3,462.37,150,listed,True
+Synthetic Issuer 013 Ltd,SYN013,Capital Goods,2021-08-20,2021-08-23,2021-08-30,77.0,81.0,81.0,127.93,77.72,50.21,150,listed,True
+Synthetic Issuer 014 Ltd,SYN014,Realty & Infrastructure,2021-09-07,2021-09-09,2021-09-17,885.0,952.0,934.0,1129.02,877.82,251.2,15,listed,True
+Synthetic Issuer 015 Ltd,SYN015,Financial Services,2021-09-24,2021-09-26,2021-10-03,1285.0,1329.0,1304.0,401.92,343.17,58.75,15,listed,True
+Synthetic Issuer 016 Ltd,SYN016,Automobile & Ancillaries,2021-10-07,2021-10-10,2021-10-13,219.0,231.0,230.0,2970.66,455.01,2515.65,75,listed,True
+Synthetic Issuer 017 Ltd,SYN017,Automobile & Ancillaries,2021-10-12,2021-10-14,2021-10-17,291.0,301.0,295.0,945.01,335.02,609.99,75,listed,True
+Synthetic Issuer 018 Ltd,SYN018,Information Technology,2021-10-23,2021-10-26,2021-10-31,514.0,547.0,538.0,711.06,489.96,221.1,30,listed,True
+Synthetic Issuer 019 Ltd,SYN019,Textiles,2021-10-24,2021-10-27,2021-10-31,148.0,160.0,157.0,789.77,667.08,122.69,75,listed,True
+Synthetic Issuer 020 Ltd,SYN020,Realty & Infrastructure,2021-11-18,2021-11-21,2021-11-26,216.0,229.0,226.0,267.3,135.88,131.42,75,listed,True
+Synthetic Issuer 021 Ltd,SYN021,Automobile & Ancillaries,2021-12-18,2021-12-20,2021-12-23,83.0,86.0,84.0,1439.97,309.44,1130.53,150,listed,True
+Synthetic Issuer 022 Ltd,SYN022,Information Technology,2021-12-19,2021-12-21,2021-12-24,147.0,160.0,156.0,983.89,615.93,367.96,75,listed,True
+Synthetic Issuer 023 Ltd,SYN023,Consumer Durables,2022-01-06,2022-01-09,2022-01-17,174.0,188.0,186.0,2075.54,364.84,1710.7,75,listed,True
+Synthetic Issuer 024 Ltd,SYN024,Consumer Durables,2022-02-20,2022-02-23,,54.0,57.0,,9045.75,7029.85,2015.9,150,withdrawn,True
+Synthetic Issuer 025 Ltd,SYN025,Automobile & Ancillaries,2022-03-02,2022-03-04,,35.0,36.0,,233.82,215.9,17.92,150,withdrawn,True
+Synthetic Issuer 026 Ltd,SYN026,Automobile & Ancillaries,2022-03-05,2022-03-07,2022-03-14,98.0,102.0,101.0,494.94,166.0,328.94,150,listed,True
+Synthetic Issuer 027 Ltd,SYN027,Automobile & Ancillaries,2022-03-21,2022-03-24,2022-03-30,946.0,1026.0,1010.0,122.1,52.92,69.18,15,listed,True
+Synthetic Issuer 028 Ltd,SYN028,Consumer Durables,2022-04-16,2022-04-18,2022-04-23,324.0,341.0,333.0,983.51,536.71,446.8,75,listed,True
+Synthetic Issuer 029 Ltd,SYN029,Realty & Infrastructure,2022-04-20,2022-04-23,2022-05-01,204.0,217.0,214.0,2389.44,1436.81,952.63,75,listed,True
+Synthetic Issuer 030 Ltd,SYN030,Textiles,2022-05-03,2022-05-05,2022-05-10,212.0,215.0,214.0,2700.35,2354.59,345.76,75,listed,True
+Synthetic Issuer 031 Ltd,SYN031,Automobile & Ancillaries,2022-06-30,2022-07-03,2022-07-07,531.0,579.0,566.0,618.11,252.53,365.58,30,listed,True
+Synthetic Issuer 032 Ltd,SYN032,Textiles,2022-07-06,2022-07-09,2022-07-16,1498.0,1575.0,1564.0,393.04,77.84,315.2,15,listed,True
+Synthetic Issuer 033 Ltd,SYN033,Textiles,2022-07-09,2022-07-11,2022-07-14,425.0,458.0,456.0,80.0,65.3,14.7,30,listed,True
+Synthetic Issuer 034 Ltd,SYN034,Pharmaceuticals,2022-07-15,2022-07-17,2022-07-23,121.0,129.0,128.0,714.67,170.1,544.57,150,listed,True
+Synthetic Issuer 035 Ltd,SYN035,Realty & Infrastructure,2022-07-16,2022-07-18,2022-07-21,249.0,264.0,259.0,695.86,480.04,215.82,75,listed,True
+Synthetic Issuer 036 Ltd,SYN036,Financial Services,2022-08-07,2022-08-09,2022-08-12,125.0,131.0,128.0,494.56,154.0,340.56,150,listed,True
+Synthetic Issuer 037 Ltd,SYN037,Financial Services,2022-09-03,2022-09-06,2022-09-11,115.0,126.0,122.0,2072.67,973.2,1099.47,150,listed,True
+Synthetic Issuer 038 Ltd,SYN038,Pharmaceuticals,2022-10-03,2022-10-05,2022-10-13,125.0,126.0,126.0,257.29,103.36,153.93,150,listed,True
+Synthetic Issuer 039 Ltd,SYN039,Financial Services,2022-10-17,2022-10-19,2022-10-23,287.0,296.0,295.0,6837.39,2780.87,4056.52,75,listed,True
+Synthetic Issuer 040 Ltd,SYN040,Textiles,2022-10-19,2022-10-21,,99.0,101.0,,896.21,617.08,279.13,150,withdrawn,True
+Synthetic Issuer 041 Ltd,SYN041,Consumer Durables,2022-11-01,2022-11-03,2022-11-11,129.0,140.0,137.0,805.12,162.73,642.39,150,listed,True
+Synthetic Issuer 042 Ltd,SYN042,Healthcare Services,2022-11-02,2022-11-05,2022-11-13,245.0,257.0,253.0,550.38,272.2,278.18,75,listed,True
+Synthetic Issuer 043 Ltd,SYN043,Information Technology,2022-11-12,2022-11-15,2022-11-21,30.0,32.0,31.0,196.21,155.09,41.12,150,listed,True
+Synthetic Issuer 044 Ltd,SYN044,Chemicals,2022-11-27,2022-11-29,2022-12-07,132.0,142.0,140.0,646.4,353.0,293.4,150,listed,True
+Synthetic Issuer 045 Ltd,SYN045,Consumer Durables,2022-12-05,2022-12-07,2022-12-12,557.0,581.0,576.0,3093.81,2718.51,375.3,30,listed,True
+Synthetic Issuer 046 Ltd,SYN046,Financial Services,2023-02-05,2023-02-07,2023-02-14,160.0,172.0,168.0,3982.18,1280.52,2701.66,75,listed,True
+Synthetic Issuer 047 Ltd,SYN047,Information Technology,2023-02-12,2023-02-15,2023-02-18,270.0,284.0,284.0,231.35,56.89,174.46,75,listed,True
+Synthetic Issuer 048 Ltd,SYN048,Information Technology,2023-02-28,2023-03-02,2023-03-06,115.0,122.0,119.0,320.05,73.12,246.93,150,listed,True
+Synthetic Issuer 049 Ltd,SYN049,Realty & Infrastructure,2023-04-10,2023-04-13,2023-04-17,159.0,174.0,169.0,662.14,114.37,547.77,75,listed,True
+Synthetic Issuer 050 Ltd,SYN050,Automobile & Ancillaries,2023-05-16,2023-05-19,2023-05-25,342.0,364.0,358.0,691.48,351.18,340.3,75,listed,True
+Synthetic Issuer 051 Ltd,SYN051,Consumer Durables,2023-05-17,2023-05-19,2023-05-26,531.0,561.0,556.0,4024.01,2569.31,1454.7,30,listed,True
+Synthetic Issuer 052 Ltd,SYN052,Automobile & Ancillaries,2023-05-17,2023-05-19,2023-05-23,381.0,394.0,387.0,216.24,106.88,109.36,75,listed,True
+Synthetic Issuer 053 Ltd,SYN053,Textiles,2023-05-22,2023-05-25,2023-06-02,178.0,188.0,187.0,1664.31,730.97,933.34,75,listed,True
+Synthetic Issuer 054 Ltd,SYN054,Consumer Durables,2023-05-23,2023-05-26,2023-06-02,177.0,187.0,185.0,1023.31,866.17,157.14,75,listed,True
+Synthetic Issuer 055 Ltd,SYN055,Chemicals,2023-06-04,2023-06-07,2023-06-10,292.0,304.0,297.0,2132.21,1732.64,399.57,75,listed,True
+Synthetic Issuer 056 Ltd,SYN056,Automobile & Ancillaries,2023-06-18,2023-06-21,2023-06-24,64.0,66.0,65.0,1186.99,447.28,739.71,150,listed,True
+Synthetic Issuer 057 Ltd,SYN057,Chemicals,2023-06-19,2023-06-21,2023-06-29,231.0,237.0,234.0,578.39,295.4,282.99,75,listed,True
+Synthetic Issuer 058 Ltd,SYN058,Realty & Infrastructure,2023-06-25,2023-06-28,2023-07-01,82.0,85.0,84.0,4759.46,2102.57,2656.89,150,listed,True
+Synthetic Issuer 059 Ltd,SYN059,Automobile & Ancillaries,2023-07-04,2023-07-07,2023-07-10,213.0,220.0,218.0,2046.4,1268.51,777.89,75,listed,True
+Synthetic Issuer 060 Ltd,SYN060,Information Technology,2023-07-15,2023-07-18,2023-07-21,486.0,533.0,519.0,973.71,481.59,492.12,30,listed,True
+Synthetic Issuer 061 Ltd,SYN061,Capital Goods,2023-07-31,2023-08-03,2023-08-10,290.0,306.0,304.0,262.74,147.52,115.22,75,listed,True
+Synthetic Issuer 062 Ltd,SYN062,Consumer Durables,2023-08-21,2023-08-24,2023-08-28,156.0,163.0,162.0,6551.38,1043.26,5508.12,75,listed,True
+Synthetic Issuer 063 Ltd,SYN063,Realty & Infrastructure,2023-08-29,2023-08-31,2023-09-06,172.0,187.0,185.0,967.17,337.36,629.81,75,listed,True
+Synthetic Issuer 064 Ltd,SYN064,Chemicals,2023-09-05,2023-09-08,2023-09-16,603.0,649.0,632.0,845.83,367.59,478.24,30,listed,True
+Synthetic Issuer 065 Ltd,SYN065,Textiles,2023-09-09,2023-09-12,2023-09-17,116.0,126.0,122.0,95.28,86.67,8.61,150,listed,True
+Synthetic Issuer 066 Ltd,SYN066,Information Technology,2023-09-24,2023-09-26,2023-10-02,297.0,308.0,300.0,2986.51,635.54,2350.97,75,listed,True
+Synthetic Issuer 067 Ltd,SYN067,Pharmaceuticals,2023-10-07,2023-10-10,2023-10-14,534.0,563.0,561.0,295.35,175.64,119.71,30,listed,True
+Synthetic Issuer 068 Ltd,SYN068,Information Technology,2023-10-14,2023-10-17,2023-10-21,148.0,159.0,157.0,3819.54,3357.78,461.76,75,listed,True
+Synthetic Issuer 069 Ltd,SYN069,Financial Services,2023-11-11,2023-11-14,2023-11-19,187.0,203.0,199.0,815.34,168.34,647.0,75,listed,True
+Synthetic Issuer 070 Ltd,SYN070,Textiles,2023-12-06,2023-12-09,2023-12-13,98.0,107.0,104.0,1786.61,941.17,845.44,150,listed,True
+Synthetic Issuer 071 Ltd,SYN071,Chemicals,2023-12-07,2023-12-10,2023-12-17,587.0,635.0,620.0,1905.08,872.42,1032.66,30,listed,True
+Synthetic Issuer 072 Ltd,SYN072,Healthcare Services,2023-12-26,2023-12-28,2024-01-02,114.0,123.0,121.0,2216.43,400.94,1815.49,150,listed,True
+Synthetic Issuer 073 Ltd,SYN073,Automobile & Ancillaries,2024-01-01,2024-01-04,2024-01-08,228.0,239.0,233.0,984.6,322.74,661.86,75,listed,True
+Synthetic Issuer 074 Ltd,SYN074,Financial Services,2024-02-02,2024-02-05,2024-02-12,133.0,137.0,137.0,253.91,249.7,4.21,150,listed,True
+Synthetic Issuer 075 Ltd,SYN075,Textiles,2024-03-15,2024-03-17,2024-03-20,458.0,490.0,486.0,445.68,286.41,159.27,30,listed,True
+Synthetic Issuer 076 Ltd,SYN076,Capital Goods,2024-03-18,2024-03-20,2024-03-27,84.0,89.0,88.0,925.38,154.85,770.53,150,listed,True
+Synthetic Issuer 077 Ltd,SYN077,Financial Services,2024-03-25,2024-03-27,2024-03-30,79.0,81.0,81.0,296.58,177.34,119.24,150,listed,True
+Synthetic Issuer 078 Ltd,SYN078,Consumer Durables,2024-03-29,2024-03-31,2024-04-08,162.0,175.0,173.0,786.37,343.77,442.6,75,listed,True
+Synthetic Issuer 079 Ltd,SYN079,Financial Services,2024-04-15,2024-04-17,2024-04-20,85.0,91.0,90.0,1419.94,976.16,443.78,150,listed,True
+Synthetic Issuer 080 Ltd,SYN080,Pharmaceuticals,2024-04-23,2024-04-25,2024-05-02,113.0,119.0,117.0,523.8,370.47,153.33,150,listed,True
+Synthetic Issuer 081 Ltd,SYN081,Pharmaceuticals,2024-04-30,2024-05-03,2024-05-06,96.0,99.0,98.0,937.15,765.75,171.4,150,listed,True
+Synthetic Issuer 082 Ltd,SYN082,Textiles,2024-05-04,2024-05-06,2024-05-12,211.0,231.0,226.0,986.08,754.04,232.04,75,listed,True
+Synthetic Issuer 083 Ltd,SYN083,Realty & Infrastructure,2024-06-16,2024-06-18,,157.0,165.0,,309.26,153.19,156.07,75,withdrawn,True
+Synthetic Issuer 084 Ltd,SYN084,Capital Goods,2024-06-19,2024-06-22,2024-06-28,130.0,141.0,139.0,2436.17,2104.21,331.96,150,listed,True
+Synthetic Issuer 085 Ltd,SYN085,Consumer Durables,2024-06-25,2024-06-28,2024-07-04,128.0,132.0,130.0,1509.64,717.2,792.44,150,listed,True
+Synthetic Issuer 086 Ltd,SYN086,Financial Services,2024-07-02,2024-07-04,2024-07-10,172.0,184.0,181.0,1593.57,888.88,704.69,75,listed,True
+Synthetic Issuer 087 Ltd,SYN087,Automobile & Ancillaries,2024-07-02,2024-07-05,2024-07-09,432.0,467.0,458.0,1721.14,1045.22,675.92,30,listed,True
+Synthetic Issuer 088 Ltd,SYN088,Textiles,2024-07-30,2024-08-02,2024-08-07,171.0,179.0,177.0,2658.07,906.62,1751.45,75,listed,True
+Synthetic Issuer 089 Ltd,SYN089,Capital Goods,2024-08-05,2024-08-07,2024-08-11,160.0,171.0,168.0,729.45,470.24,259.21,75,listed,True
+Synthetic Issuer 090 Ltd,SYN090,Financial Services,2024-08-07,2024-08-09,2024-08-12,121.0,124.0,123.0,2477.86,2458.42,19.44,150,listed,True
+Synthetic Issuer 091 Ltd,SYN091,Automobile & Ancillaries,2024-08-07,2024-08-10,,109.0,117.0,,191.4,49.3,142.1,150,withdrawn,True
+Synthetic Issuer 092 Ltd,SYN092,Capital Goods,2024-08-22,2024-08-25,2024-08-30,428.0,444.0,435.0,216.95,37.21,179.74,30,listed,True
+Synthetic Issuer 093 Ltd,SYN093,Healthcare Services,2024-08-25,2024-08-27,2024-08-31,131.0,141.0,139.0,568.8,323.66,245.14,150,listed,True
+Synthetic Issuer 094 Ltd,SYN094,Chemicals,2024-09-05,2024-09-07,2024-09-13,288.0,295.0,292.0,477.74,248.78,228.96,75,listed,True
+Synthetic Issuer 095 Ltd,SYN095,Capital Goods,2024-09-20,2024-09-23,2024-09-28,349.0,358.0,353.0,104.62,70.79,33.83,75,listed,True
+Synthetic Issuer 096 Ltd,SYN096,Chemicals,2024-09-25,2024-09-27,2024-10-05,142.0,150.0,150.0,861.97,822.95,39.02,150,listed,True
+Synthetic Issuer 097 Ltd,SYN097,Information Technology,2024-09-30,2024-10-02,2024-10-09,209.0,225.0,224.0,80.0,16.29,63.71,75,listed,True
+Synthetic Issuer 098 Ltd,SYN098,Chemicals,2024-09-30,2024-10-03,2024-10-10,134.0,145.0,141.0,308.75,215.81,92.94,150,listed,True
+Synthetic Issuer 099 Ltd,SYN099,Healthcare Services,2024-10-01,2024-10-03,2024-10-08,109.0,115.0,112.0,1052.75,158.78,893.97,150,listed,True
+Synthetic Issuer 100 Ltd,SYN100,Capital Goods,2024-10-13,2024-10-15,2024-10-20,138.0,143.0,143.0,487.97,323.64,164.33,150,listed,True
+Synthetic Issuer 101 Ltd,SYN101,Capital Goods,2024-10-21,2024-10-24,,289.0,312.0,,812.32,539.54,272.78,75,withdrawn,True
+Synthetic Issuer 102 Ltd,SYN102,Realty & Infrastructure,2024-10-23,2024-10-26,2024-10-31,135.0,140.0,138.0,916.89,516.82,400.07,150,listed,True
+Synthetic Issuer 103 Ltd,SYN103,Financial Services,2024-10-31,2024-11-02,2024-11-10,398.0,416.0,414.0,208.44,73.79,134.65,30,listed,True
+Synthetic Issuer 104 Ltd,SYN104,Realty & Infrastructure,2024-11-06,2024-11-09,2024-11-13,432.0,446.0,445.0,1424.62,459.33,965.29,30,listed,True
+Synthetic Issuer 105 Ltd,SYN105,Capital Goods,2024-11-26,2024-11-29,2024-12-04,377.0,396.0,387.0,1278.08,1234.98,43.1,75,listed,True
+Synthetic Issuer 106 Ltd,SYN106,Information Technology,2024-11-26,2024-11-29,2024-12-02,225.0,234.0,228.0,154.39,46.66,107.73,75,listed,True
+Synthetic Issuer 107 Ltd,SYN107,Healthcare Services,2024-12-05,2024-12-08,2024-12-13,328.0,341.0,338.0,815.32,272.61,542.71,75,listed,True
+Synthetic Issuer 108 Ltd,SYN108,Healthcare Services,2024-12-18,2024-12-21,2024-12-24,280.0,298.0,291.0,772.16,724.06,48.1,75,listed,True
+Synthetic Issuer 109 Ltd,SYN109,Consumer Durables,2024-12-20,2024-12-22,2024-12-27,111.0,117.0,115.0,781.54,773.85,7.69,150,listed,True
+Synthetic Issuer 110 Ltd,SYN110,Chemicals,2024-12-30,2025-01-02,2025-01-06,127.0,132.0,131.0,2076.81,977.39,1099.42,150,listed,True
+Synthetic Issuer 111 Ltd,SYN111,Textiles,2025-01-09,2025-01-12,2025-01-17,63.0,66.0,66.0,624.42,316.39,308.03,150,listed,True
+Synthetic Issuer 112 Ltd,SYN112,Chemicals,2025-02-07,2025-02-09,2025-02-16,226.0,241.0,237.0,1424.81,1172.08,252.73,75,listed,True
+Synthetic Issuer 113 Ltd,SYN113,Information Technology,2025-02-14,2025-02-16,2025-02-21,150.0,165.0,161.0,2316.18,1246.03,1070.15,75,listed,True
+Synthetic Issuer 114 Ltd,SYN114,Realty & Infrastructure,2025-02-18,2025-02-20,2025-02-25,155.0,163.0,159.0,384.22,222.86,161.36,75,listed,True
+Synthetic Issuer 115 Ltd,SYN115,Consumer Durables,2025-03-02,2025-03-04,2025-03-10,247.0,258.0,255.0,582.77,163.01,419.76,75,listed,True
+Synthetic Issuer 116 Ltd,SYN116,Healthcare Services,2025-04-05,2025-04-07,2025-04-15,124.0,131.0,127.0,1340.48,975.92,364.56,150,listed,True
+Synthetic Issuer 117 Ltd,SYN117,Pharmaceuticals,2025-04-10,2025-04-13,2025-04-20,199.0,204.0,203.0,1413.97,1303.29,110.68,75,listed,True
+Synthetic Issuer 118 Ltd,SYN118,Pharmaceuticals,2025-04-11,2025-04-14,2025-04-21,241.0,249.0,246.0,355.7,179.59,176.11,75,listed,True
+Synthetic Issuer 119 Ltd,SYN119,Information Technology,2025-04-25,2025-04-27,2025-04-30,109.0,113.0,111.0,159.82,127.64,32.18,150,listed,True
+Synthetic Issuer 120 Ltd,SYN120,Automobile & Ancillaries,2025-05-03,2025-05-06,2025-05-10,611.0,635.0,622.0,2130.04,1772.75,357.29,30,listed,True
+Synthetic Issuer 121 Ltd,SYN121,Textiles,2025-05-10,2025-05-13,2025-05-20,84.0,87.0,86.0,907.39,881.5,25.89,150,listed,True
+Synthetic Issuer 122 Ltd,SYN122,Realty & Infrastructure,2025-05-11,2025-05-14,2025-05-22,275.0,299.0,294.0,1334.55,1256.75,77.8,75,listed,True
+Synthetic Issuer 123 Ltd,SYN123,Chemicals,2025-05-19,2025-05-22,2025-05-29,121.0,125.0,122.0,1612.93,698.58,914.35,150,listed,True
+Synthetic Issuer 124 Ltd,SYN124,Information Technology,2025-05-25,2025-05-27,2025-06-01,826.0,872.0,865.0,1595.14,627.74,967.4,30,listed,True
+Synthetic Issuer 125 Ltd,SYN125,Information Technology,2025-05-25,2025-05-28,2025-06-01,616.0,639.0,634.0,127.41,63.86,63.55,30,listed,True
+Synthetic Issuer 126 Ltd,SYN126,Automobile & Ancillaries,2025-06-17,2025-06-20,2025-06-23,204.0,213.0,213.0,754.78,545.58,209.2,75,listed,True
+Synthetic Issuer 127 Ltd,SYN127,Healthcare Services,2025-07-12,2025-07-15,2025-07-22,232.0,240.0,239.0,203.51,131.97,71.54,75,listed,True
+Synthetic Issuer 128 Ltd,SYN128,Realty & Infrastructure,2025-07-13,2025-07-16,2025-07-24,151.0,159.0,155.0,167.04,106.07,60.97,75,listed,True
+Synthetic Issuer 129 Ltd,SYN129,Consumer Durables,2025-08-03,2025-08-06,2025-08-09,178.0,181.0,181.0,1757.87,1155.93,601.94,75,listed,True
+Synthetic Issuer 130 Ltd,SYN130,Realty & Infrastructure,2025-08-11,2025-08-13,2025-08-18,140.0,153.0,150.0,460.65,193.33,267.32,150,listed,True
+Synthetic Issuer 131 Ltd,SYN131,Automobile & Ancillaries,2025-08-22,2025-08-24,2025-08-27,153.0,158.0,156.0,650.76,563.22,87.54,75,listed,True
+Synthetic Issuer 132 Ltd,SYN132,Automobile & Ancillaries,2025-08-22,2025-08-24,2025-08-29,517.0,543.0,528.0,521.94,99.36,422.58,30,listed,True
+Synthetic Issuer 133 Ltd,SYN133,Textiles,2025-09-06,2025-09-09,2025-09-15,57.0,59.0,58.0,154.39,46.16,108.23,150,listed,True
+Synthetic Issuer 134 Ltd,SYN134,Financial Services,2025-09-10,2025-09-12,2025-09-19,133.0,134.0,134.0,217.78,164.23,53.55,150,listed,True
+Synthetic Issuer 135 Ltd,SYN135,Chemicals,2025-09-11,2025-09-14,2025-09-22,192.0,208.0,205.0,88.49,80.54,7.95,75,listed,True
+Synthetic Issuer 136 Ltd,SYN136,Chemicals,2025-10-09,2025-10-12,2025-10-20,193.0,212.0,207.0,4041.05,2974.79,1066.26,75,listed,True
+Synthetic Issuer 137 Ltd,SYN137,Consumer Durables,2025-11-03,2025-11-06,2025-11-10,92.0,96.0,94.0,150.06,25.75,124.31,150,listed,True
+Synthetic Issuer 138 Ltd,SYN138,Realty & Infrastructure,2025-11-10,2025-11-13,2025-11-18,130.0,134.0,133.0,8657.01,7828.68,828.33,150,listed,True
+Synthetic Issuer 139 Ltd,SYN139,Consumer Durables,2025-11-11,2025-11-13,,335.0,349.0,,301.1,148.66,152.44,75,withdrawn,True
+Synthetic Issuer 140 Ltd,SYN140,Automobile & Ancillaries,2025-11-22,2025-11-25,2025-12-02,301.0,319.0,313.0,850.82,478.43,372.39,75,listed,True
+Synthetic Issuer 141 Ltd,SYN141,Chemicals,2025-11-24,2025-11-27,2025-11-30,263.0,287.0,281.0,178.89,86.05,92.84,75,listed,True
+Synthetic Issuer 142 Ltd,SYN142,Consumer Durables,2025-12-11,2025-12-14,,224.0,241.0,,289.94,114.23,175.71,75,withdrawn,True
+Synthetic Issuer 143 Ltd,SYN143,Realty & Infrastructure,2026-01-11,2026-01-13,,130.0,141.0,,14404.75,4279.99,10124.76,150,withdrawn,True
+Synthetic Issuer 144 Ltd,SYN144,Textiles,2026-02-12,2026-02-15,2026-02-20,240.0,257.0,255.0,3761.51,568.72,3192.79,75,listed,True
+Synthetic Issuer 145 Ltd,SYN145,Chemicals,2026-03-09,2026-03-11,2026-03-14,180.0,184.0,183.0,121.9,110.94,10.96,75,listed,True
+Synthetic Issuer 146 Ltd,SYN146,Chemicals,2026-03-09,2026-03-11,2026-03-15,343.0,367.0,366.0,1526.42,793.39,733.03,75,listed,True
+Synthetic Issuer 147 Ltd,SYN147,Automobile & Ancillaries,2026-03-17,2026-03-20,2026-03-24,196.0,205.0,201.0,362.1,316.82,45.28,75,listed,True
+Synthetic Issuer 148 Ltd,SYN148,Automobile & Ancillaries,2026-04-20,2026-04-22,2026-04-28,256.0,265.0,261.0,1408.81,330.07,1078.74,75,listed,True
+Synthetic Issuer 149 Ltd,SYN149,Financial Services,2026-04-27,2026-04-29,2026-05-02,202.0,206.0,204.0,1902.54,728.36,1174.18,75,listed,True
+Synthetic Issuer 150 Ltd,SYN150,Textiles,2026-05-11,2026-05-13,,252.0,270.0,,367.51,211.43,156.08,75,open,True
+Synthetic Issuer 151 Ltd,SYN151,Capital Goods,2026-06-13,2026-06-16,,79.0,81.0,,1279.32,313.5,965.82,150,open,True
+Synthetic Issuer 152 Ltd,SYN152,Chemicals,2026-06-29,2026-07-01,,99.0,108.0,,1012.7,894.68,118.02,150,upcoming,True
+Synthetic Issuer 153 Ltd,SYN153,Automobile & Ancillaries,2026-06-29,2026-07-02,,89.0,92.0,,3451.23,1589.18,1862.05,150,upcoming,True

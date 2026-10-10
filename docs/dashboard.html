@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IPO Listing Performance</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page:        #f9f9f7;
+    --surface:     #fcfcfb;
+    --ink:         #0b0b0b;
+    --ink2:        #52514e;
+    --muted:       #898781;
+    --grid:        #e1e0d9;
+    --baseline:    #c3c2b7;
+    --border:      rgba(11,11,11,0.10);
+    --s1:          #2a78d6;
+    --s2:          #eb6834;
+    --pos:         #2a78d6;
+    --neg:         #e34948;
+    --mid:         #f0efec;
+    --good:        #0ca30c;
+    --critical:    #d03b3b;
+    --warnbg:      #fff8e6;
+    --warnink:     #7a5a00;
+    --warnline:    #fab219;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7;
+      --muted: #898781; --grid: #2c2c2a; --baseline: #383835;
+      --border: rgba(255,255,255,0.10);
+      --s1: #3987e5; --s2: #d95926; --pos: #3987e5; --neg: #e66767;
+      --mid: #383835; --good: #0ca30c; --critical: #d03b3b;
+      --warnbg: #2a2208; --warnink: #f0d79a; --warnline: #fab219;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7;
+    --muted: #898781; --grid: #2c2c2a; --baseline: #383835;
+    --border: rgba(255,255,255,0.10);
+    --s1: #3987e5; --s2: #d95926; --pos: #3987e5; --neg: #e66767;
+    --mid: #383835; --good: #0ca30c; --critical: #d03b3b;
+    --warnbg: #2a2208; --warnink: #f0d79a; --warnline: #fab219;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink);
+    font: 15px/1.5 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 16px 64px; }
+
+  header h1 { margin: 0 0 4px; font-size: 1.6rem; letter-spacing: -0.015em; }
+  header p  { margin: 0; color: var(--ink2); font-size: 0.9rem; }
+  .meta { margin-top: 10px; color: var(--muted); font-size: 0.78rem;
+          font-variant-numeric: tabular-nums; }
+
+  .banner {
+    margin: 20px 0 0; padding: 12px 14px; border-radius: 10px;
+    background: var(--warnbg); color: var(--warnink);
+    border: 1px solid var(--border); border-left: 3px solid var(--warnline);
+    font-size: 0.85rem;
+  }
+  .banner strong { font-weight: 650; }
+
+  .tiles { display: grid; gap: 12px; margin: 24px 0 8px;
+           grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  .tile { background: var(--surface); border: 1px solid var(--border);
+          border-radius: 12px; padding: 16px 18px; }
+  .tile .k { color: var(--ink2); font-size: 0.74rem; text-transform: uppercase;
+             letter-spacing: 0.06em; font-weight: 600; }
+  .tile .v { font-size: 1.85rem; font-weight: 620; letter-spacing: -0.02em;
+             margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .tile .s { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+
+  .grid { display: grid; gap: 16px; margin-top: 16px; }
+  @media (min-width: 880px) { .grid.two { grid-template-columns: 1fr 1fr; } }
+
+  .card { background: var(--surface); border: 1px solid var(--border);
+          border-radius: 12px; padding: 18px 18px 12px; min-width: 0; }
+  .card h2 { margin: 0 0 2px; font-size: 1rem; font-weight: 620;
+             letter-spacing: -0.01em; }
+  .card p.sub { margin: 0 0 14px; color: var(--ink2); font-size: 0.83rem; }
+  .card figure { margin: 0; }
+  figcaption { color: var(--muted); font-size: 0.76rem; margin-top: 8px; }
+
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .ax   { font-size: 11px; fill: var(--muted); }
+  .axl  { font-size: 11px; fill: var(--ink2); font-weight: 560; }
+  .dl   { font-size: 11px; fill: var(--ink2); font-weight: 600;
+          font-variant-numeric: tabular-nums; }
+  .gl   { stroke: var(--grid); stroke-width: 1; }
+  .bl   { stroke: var(--baseline); stroke-width: 1; }
+
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 0 0 10px;
+            font-size: 0.8rem; color: var(--ink2); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+
+  .toggle { background: none; border: 1px solid var(--border); color: var(--ink2);
+            border-radius: 7px; padding: 4px 10px; font-size: 0.76rem;
+            cursor: pointer; font-family: inherit; }
+  .toggle:hover { color: var(--ink); }
+  .cardhead { display: flex; justify-content: space-between; align-items: start;
+              gap: 12px; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.8rem;
+          font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 5px 8px;
+           border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--ink2); font-weight: 600; }
+  .hidden { display: none; }
+
+  #tip { position: fixed; pointer-events: none; opacity: 0; z-index: 9;
+         background: var(--surface); color: var(--ink);
+         border: 1px solid var(--border); border-radius: 8px;
+         padding: 7px 10px; font-size: 0.78rem; max-width: 240px;
+         box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+         transition: opacity 90ms linear; font-variant-numeric: tabular-nums; }
+  #tip b { font-weight: 620; }
+
+  footer { margin-top: 32px; color: var(--muted); font-size: 0.78rem;
+           line-height: 1.7; }
+  footer code { font-size: 0.95em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>IPO Listing Performance</h1>
+    <p>Indian mainboard IPOs — what predicts a listing-day gain, and whether it lasts.</p>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div id="banner"></div>
+  <div class="tiles" id="tiles"></div>
+
+  <div class="grid two">
+    <section class="card">
+      <div class="cardhead">
+        <div>
+          <h2>How often is the listing gain negative?</h2>
+          <p class="sub">Distribution of listing-day gain against the issue price.</p>
+        </div>
+        <button class="toggle" data-table="t-hist">Table</button>
+      </div>
+      <figure><div id="c-hist"></div>
+        <figcaption>Bars left of zero are issues that listed below their issue price.</figcaption>
+      </figure>
+      <div id="t-hist" class="hidden"></div>
+    </section>
+
+    <section class="card">
+      <div class="cardhead">
+        <div>
+          <h2>Does demand predict the gain?</h2>
+          <p class="sub">Total subscription (log scale) against listing-day gain.</p>
+        </div>
+        <button class="toggle" data-table="t-scatter">Table</button>
+      </div>
+      <figure><div id="c-scatter"></div>
+        <figcaption>One point per listed issue. Hover for the company.</figcaption>
+      </figure>
+      <div id="t-scatter" class="hidden"></div>
+    </section>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <div class="cardhead">
+        <div>
+          <h2>Median listing gain by sector</h2>
+          <p class="sub">Ranked. Sectors with fewer than 8 issues are marked — those medians are noise.</p>
+        </div>
+        <button class="toggle" data-table="t-sector">Table</button>
+      </div>
+      <figure><div id="c-sector"></div>
+        <figcaption>Median, not mean: one 150% debut would drag an average upward on its own.</figcaption>
+      </figure>
+      <div id="t-sector" class="hidden"></div>
+    </section>
+  </div>
+
+  <div class="grid two">
+    <section class="card">
+      <div class="cardhead">
+        <div>
+          <h2>Does the gain survive?</h2>
+          <p class="sub">Median gain over the issue price, at listing and after.</p>
+        </div>
+        <button class="toggle" data-table="t-decay">Table</button>
+      </div>
+      <figure><div id="c-decay"></div>
+        <figcaption>The single most useful chart here: the listing-day number is not the return.</figcaption>
+      </figure>
+      <div id="t-decay" class="hidden"></div>
+    </section>
+
+    <section class="card">
+      <div class="cardhead">
+        <div>
+          <h2>Or is it just the market?</h2>
+          <p class="sub">Quarterly average gain against the rolling average of the preceding ten listings.</p>
+        </div>
+        <button class="toggle" data-table="t-quarter">Table</button>
+      </div>
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--s1)"></i>Quarterly average</span>
+        <span><i class="swatch" style="background:var(--s2)"></i>Regime (prior 10 listings)</span>
+      </div>
+      <figure><div id="c-quarter"></div>
+        <figcaption>Where the two track each other, conditions are doing the work — not the issue.</figcaption>
+      </figure>
+      <div id="t-quarter" class="hidden"></div>
+    </section>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+<div id="tip"></div>
+
+<script>
+const DATA = {"generated":"2026-10-10 23:46 UTC","is_synthetic":true,"kpi":{"n_listed":140,"median_gain":10.2,"hit_rate":71.0,"worst":-39.6,"best":57.1,"median_d30":5.8,"pct_faded":64.0,"pos_d30":67.0,"n_decay":140},"histogram":[{"lo":-40.0,"hi":-30.0,"n":3},{"lo":-30.0,"hi":-20.0,"n":5},{"lo":-20.0,"hi":-10.0,"n":7},{"lo":-10.0,"hi":0.0,"n":25},{"lo":0.0,"hi":10.0,"n":29},{"lo":10.0,"hi":20.0,"n":30},{"lo":20.0,"hi":30.0,"n":24},{"lo":30.0,"hi":40.0,"n":13},{"lo":40.0,"hi":50.0,"n":3},{"lo":50.0,"hi":60.0,"n":1}],"scatter":[{"c":"Synthetic Issuer 027 Ltd","sub":0.15,"gain":-20.66},{"c":"Synthetic Issuer 095 Ltd","sub":0.27,"gain":20.19},{"c":"Synthetic Issuer 100 Ltd","sub":0.33,"gain":-7.55},{"c":"Synthetic Issuer 103 Ltd","sub":0.36,"gain":37.26},{"c":"Synthetic Issuer 030 Ltd","sub":0.4,"gain":-32.26},{"c":"Synthetic Issuer 130 Ltd","sub":0.45,"gain":-16.09},{"c":"Synthetic Issuer 034 Ltd","sub":0.54,"gain":-4.67},{"c":"Synthetic Issuer 061 Ltd","sub":0.58,"gain":7.54},{"c":"Synthetic Issuer 054 Ltd","sub":0.73,"gain":3.74},{"c":"Synthetic Issuer 135 Ltd","sub":0.74,"gain":3.86},{"c":"Synthetic Issuer 136 Ltd","sub":0.75,"gain":23.27},{"c":"Synthetic Issuer 124 Ltd","sub":0.76,"gain":-13.86},{"c":"Synthetic Issuer 127 Ltd","sub":0.82,"gain":10.85},{"c":"Synthetic Issuer 022 Ltd","sub":0.85,"gain":-2.27},{"c":"Synthetic Issuer 149 Ltd","sub":0.9,"gain":-28.42},{"c":"Synthetic Issuer 016 Ltd","sub":0.9,"gain":-4.1},{"c":"Synthetic Issuer 062 Ltd","sub":0.9,"gain":-5.75},{"c":"Synthetic Issuer 120 Ltd","sub":0.9,"gain":5.3},{"c":"Synthetic Issuer 038 Ltd","sub":1.01,"gain":-0.28},{"c":"Synthetic Issuer 132 Ltd","sub":1.02,"gain":-17.76},{"c":"Synthetic Issuer 009 Ltd","sub":1.02,"gain":23.96},{"c":"Synthetic Issuer 045 Ltd","sub":1.06,"gain":-8.96},{"c":"Synthetic Issuer 051 Ltd","sub":1.12,"gain":11.66},{"c":"Synthetic Issuer 010 Ltd","sub":1.14,"gain":4.64},{"c":"Synthetic Issuer 078 Ltd","sub":1.2,"gain":15.18},{"c":"Synthetic Issuer 086 Ltd","sub":1.22,"gain":34.56},{"c":"Synthetic Issuer 102 Ltd","sub":1.24,"gain":16.01},{"c":"Synthetic Issuer 092 Ltd","sub":1.27,"gain":33.44},{"c":"Synthetic Issuer 076 Ltd","sub":1.4,"gain":26.77},{"c":"Synthetic Issuer 055 Ltd","sub":1.41,"gain":-2.34},{"c":"Synthetic Issuer 050 Ltd","sub":1.5,"gain":9.2},{"c":"Synthetic Issuer 090 Ltd","sub":1.52,"gain":6.3},{"c":"Synthetic Issuer 007 Ltd","sub":1.53,"gain":-1.78},{"c":"Synthetic Issuer 039 Ltd","sub":1.6,"gain":14.02},{"c":"Synthetic Issuer 063 Ltd","sub":1.78,"gain":-39.59},{"c":"Synthetic Issuer 003 Ltd","sub":1.92,"gain":8.29},{"c":"Synthetic Issuer 001 Ltd","sub":1.96,"gain":22.91},{"c":"Synthetic Issuer 066 Ltd","sub":2.0,"gain":19.16},{"c":"Synthetic Issuer 131 Ltd","sub":2.13,"gain":2.13},{"c":"Synthetic Issuer 065 Ltd","sub":2.15,"gain":18.82},{"c":"Synthetic Issuer 031 Ltd","sub":2.16,"gain":5.76},{"c":"Synthetic Issuer 140 Ltd","sub":2.18,"gain":7.8},{"c":"Synthetic Issuer 082 Ltd","sub":2.25,"gain":29.62},{"c":"Synthetic Issuer 060 Ltd","sub":2.26,"gain":5.97},{"c":"Synthetic Issuer 146 Ltd","sub":2.29,"gain":-21.3},{"c":"Synthetic Issuer 044 Ltd","sub":2.32,"gain":-35.44},{"c":"Synthetic Issuer 113 Ltd","sub":2.37,"gain":3.34},{"c":"Synthetic Issuer 048 Ltd","sub":2.41,"gain":17.59},{"c":"Synthetic Issuer 017 Ltd","sub":2.43,"gain":21.07},{"c":"Synthetic Issuer 004 Ltd","sub":2.53,"gain":21.19},{"c":"Synthetic Issuer 122 Ltd","sub":2.71,"gain":-7.0},{"c":"Synthetic Issuer 021 Ltd","sub":2.88,"gain":5.06},{"c":"Synthetic Issuer 043 Ltd","sub":2.91,"gain":27.42},{"c":"Synthetic Issuer 134 Ltd","sub":2.94,"gain":-5.9},{"c":"Synthetic Issuer 104 Ltd","sub":3.04,"gain":-5.97},{"c":"Synthetic Issuer 097 Ltd","sub":3.08,"gain":31.14},{"c":"Synthetic Issuer 125 Ltd","sub":3.13,"gain":14.39},{"c":"Synthetic Issuer 123 Ltd","sub":3.17,"gain":-8.88},{"c":"Synthetic Issuer 079 Ltd","sub":3.18,"gain":29.0},{"c":"Synthetic Issuer 094 Ltd","sub":3.2,"gain":39.89},{"c":"Synthetic Issuer 026 Ltd","sub":3.21,"gain":1.0},{"c":"Synthetic Issuer 128 Ltd","sub":3.31,"gain":-26.23},{"c":"Synthetic Issuer 046 Ltd","sub":3.37,"gain":26.75},{"c":"Synthetic Issuer 002 Ltd","sub":3.47,"gain":21.78},{"c":"Synthetic Issuer 052 Ltd","sub":3.47,"gain":1.19},{"c":"Synthetic Issuer 023 Ltd","sub":3.5,"gain":19.44},{"c":"Synthetic Issuer 105 Ltd","sub":3.59,"gain":-0.93},{"c":"Synthetic Issuer 070 Ltd","sub":3.64,"gain":-0.19},{"c":"Synthetic Issuer 005 Ltd","sub":3.66,"gain":9.44},{"c":"Synthetic Issuer 107 Ltd","sub":3.71,"gain":10.08},{"c":"Synthetic Issuer 049 Ltd","sub":3.81,"gain":-0.96},{"c":"Synthetic Issuer 080 Ltd","sub":3.85,"gain":12.63},{"c":"Synthetic Issuer 072 Ltd","sub":3.85,"gain":-2.99},{"c":"Synthetic Issuer 058 Ltd","sub":3.85,"gain":2.02},{"c":"Synthetic Issuer 148 Ltd","sub":3.9,"gain":14.06},{"c":"Synthetic Issuer 012 Ltd","sub":3.92,"gain":21.52},{"c":"Synthetic Issuer 109 Ltd","sub":4.27,"gain":8.45},{"c":"Synthetic Issuer 108 Ltd","sub":4.3,"gain":-3.56},{"c":"Synthetic Issuer 112 Ltd","sub":4.3,"gain":6.46},{"c":"Synthetic Issuer 088 Ltd","sub":4.36,"gain":-13.97},{"c":"Synthetic Issuer 020 Ltd","sub":4.37,"gain":32.32},{"c":"Synthetic Issuer 144 Ltd","sub":4.4,"gain":-9.17},{"c":"Synthetic Issuer 075 Ltd","sub":4.59,"gain":17.45},{"c":"Synthetic Issuer 096 Ltd","sub":4.6,"gain":17.41},{"c":"Synthetic Issuer 033 Ltd","sub":4.63,"gain":-10.02},{"c":"Synthetic Issuer 129 Ltd","sub":4.66,"gain":-3.39},{"c":"Synthetic Issuer 067 Ltd","sub":4.66,"gain":7.17},{"c":"Synthetic Issuer 053 Ltd","sub":4.71,"gain":-26.97},{"c":"Synthetic Issuer 111 Ltd","sub":4.82,"gain":39.12},{"c":"Synthetic Issuer 099 Ltd","sub":4.89,"gain":11.71},{"c":"Synthetic Issuer 018 Ltd","sub":4.94,"gain":24.83},{"c":"Synthetic Issuer 121 Ltd","sub":5.27,"gain":22.1},{"c":"Synthetic Issuer 041 Ltd","sub":5.27,"gain":-13.67},{"c":"Synthetic Issuer 011 Ltd","sub":5.44,"gain":18.68},{"c":"Synthetic Issuer 036 Ltd","sub":5.52,"gain":-4.25},{"c":"Synthetic Issuer 126 Ltd","sub":5.9,"gain":23.74},{"c":"Synthetic Issuer 087 Ltd","sub":6.0,"gain":4.53},{"c":"Synthetic Issuer 013 Ltd","sub":6.01,"gain":35.7},{"c":"Synthetic Issuer 015 Ltd","sub":6.07,"gain":42.24},{"c":"Synthetic Issuer 106 Ltd","sub":6.08,"gain":18.39},{"c":"Synthetic Issuer 069 Ltd","sub":6.24,"gain":-0.37},{"c":"Synthetic Issuer 138 Ltd","sub":6.37,"gain":-12.52},{"c":"Synthetic Issuer 084 Ltd","sub":6.44,"gain":14.45},{"c":"Synthetic Issuer 071 Ltd","sub":6.46,"gain":10.58},{"c":"Synthetic Issuer 081 Ltd","sub":6.51,"gain":18.28},{"c":"Synthetic Issuer 032 Ltd","sub":6.56,"gain":4.63},{"c":"Synthetic Issuer 093 Ltd","sub":6.72,"gain":35.86},{"c":"Synthetic Issuer 085 Ltd","sub":7.22,"gain":48.72},{"c":"Synthetic Issuer 119 Ltd","sub":7.39,"gain":4.32},{"c":"Synthetic Issuer 056 Ltd","sub":7.43,"gain":11.26},{"c":"Synthetic Issuer 064 Ltd","sub":7.44,"gain":39.53},{"c":"Synthetic Issuer 147 Ltd","sub":7.65,"gain":14.3},{"c":"Synthetic Issuer 028 Ltd","sub":7.75,"gain":16.77},{"c":"Synthetic Issuer 068 Ltd","sub":8.36,"gain":-1.27},{"c":"Synthetic Issuer 117 Ltd","sub":8.37,"gain":9.38},{"c":"Synthetic Issuer 098 Ltd","sub":8.44,"gain":37.89},{"c":"Synthetic Issuer 141 Ltd","sub":8.48,"gain":18.22},{"c":"Synthetic Issuer 006 Ltd","sub":8.66,"gain":26.39},{"c":"Synthetic Issuer 029 Ltd","sub":8.95,"gain":-7.63},{"c":"Synthetic Issuer 059 Ltd","sub":8.98,"gain":23.65},{"c":"Synthetic Issuer 073 Ltd","sub":9.0,"gain":27.03},{"c":"Synthetic Issuer 116 Ltd","sub":9.08,"gain":17.27},{"c":"Synthetic Issuer 077 Ltd","sub":9.09,"gain":33.0},{"c":"Synthetic Issuer 118 Ltd","sub":9.99,"gain":0.93},{"c":"Synthetic Issuer 110 Ltd","sub":11.28,"gain":-3.08},{"c":"Synthetic Issuer 089 Ltd","sub":11.99,"gain":26.79},{"c":"Synthetic Issuer 037 Ltd","sub":12.22,"gain":12.89},{"c":"Synthetic Issuer 057 Ltd","sub":12.38,"gain":13.65},{"c":"Synthetic Issuer 008 Ltd","sub":12.88,"gain":23.3},{"c":"Synthetic Issuer 042 Ltd","sub":13.12,"gain":49.22},{"c":"Synthetic Issuer 014 Ltd","sub":13.24,"gain":6.01},{"c":"Synthetic Issuer 115 Ltd","sub":13.25,"gain":9.68},{"c":"Synthetic Issuer 145 Ltd","sub":14.93,"gain":30.72},{"c":"Synthetic Issuer 074 Ltd","sub":22.24,"gain":9.25},{"c":"Synthetic Issuer 019 Ltd","sub":22.45,"gain":10.31},{"c":"Synthetic Issuer 035 Ltd","sub":23.33,"gain":20.18},{"c":"Synthetic Issuer 137 Ltd","sub":25.21,"gain":22.95},{"c":"Synthetic Issuer 114 Ltd","sub":27.34,"gain":15.42},{"c":"Synthetic Issuer 047 Ltd","sub":33.26,"gain":28.3},{"c":"Synthetic Issuer 133 Ltd","sub":38.69,"gain":57.07}],"sectors":[{"sector":"Capital Goods","n":12,"median":17.3,"pct_pos":83.0,"thin":false},{"sector":"Information Technology","n":15,"median":14.4,"pct_pos":73.0,"thin":false},{"sector":"Textiles","n":16,"median":13.9,"pct_pos":62.0,"thin":false},{"sector":"Chemicals","n":17,"median":13.7,"pct_pos":71.0,"thin":false},{"sector":"Financial Services","n":14,"median":13.5,"pct_pos":71.0,"thin":false},{"sector":"Healthcare Services","n":9,"median":11.7,"pct_pos":78.0,"thin":false},{"sector":"Pharmaceuticals","n":9,"median":9.4,"pct_pos":78.0,"thin":false},{"sector":"Consumer Durables","n":14,"median":9.1,"pct_pos":71.0,"thin":false},{"sector":"Automobile & Ancillaries","n":19,"median":5.8,"pct_pos":84.0,"thin":false},{"sector":"Realty & Infrastructure","n":15,"median":-1.0,"pct_pos":47.0,"thin":false}],"decay":[{"label":"Listing day","v":10.2},{"label":"+1 week","v":7.6},{"label":"+1 month","v":5.8}],"quarters":[{"q":"2021-01-01","n":4,"avg":15.2,"regime":20.4},{"q":"2021-04-01","n":5,"avg":15.3,"regime":16.8},{"q":"2021-07-01","n":4,"avg":20.5,"regime":16.4},{"q":"2021-10-01","n":8,"avg":16.2,"regime":18.8},{"q":"2022-01-01","n":3,"avg":-0.1,"regime":15.9},{"q":"2022-04-01","n":3,"avg":-7.7,"regime":9.1},{"q":"2022-07-01","n":7,"avg":3.5,"regime":-1.0},{"q":"2022-10-01","n":7,"avg":4.6,"regime":3.6},{"q":"2023-01-01","n":3,"avg":24.2,"regime":6.8},{"q":"2023-04-01","n":9,"avg":2.3,"regime":7.7},{"q":"2023-07-01","n":8,"avg":6.5,"regime":4.0},{"q":"2023-10-01","n":6,"avg":5.8,"regime":6.9},{"q":"2024-01-01","n":6,"avg":18.4,"regime":8.0},{"q":"2024-04-01","n":6,"avg":19.9,"regime":16.7},{"q":"2024-07-01","n":10,"avg":23.6,"regime":21.6},{"q":"2024-10-01","n":13,"avg":13.1,"regime":20.3},{"q":"2025-01-01","n":6,"avg":11.8,"regime":9.5},{"q":"2025-04-01","n":11,"avg":6.2,"regime":8.5},{"q":"2025-07-01","n":9,"avg":0.5,"regime":1.7},{"q":"2025-10-01","n":5,"avg":11.9,"regime":4.5},{"q":"2026-01-01","n":4,"avg":3.6,"regime":9.5},{"q":"2026-04-01","n":2,"avg":-7.2,"regime":8.3}]};
+
+/* ---------- tiny svg helpers ---------- */
+const E = s => String(s).replace(/[&<>"]/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const svg = (w, h, body) =>
+  `<svg viewBox="0 0 ${w} ${h}" role="img" preserveAspectRatio="xMidYMid meet">${body}</svg>`;
+const nice = v => (v > 0 ? '+' : '') + v.toFixed(1) + '%';
+
+const tip = document.getElementById('tip');
+function bindTips(root) {
+  root.querySelectorAll('[data-tip]').forEach(el => {
+    el.addEventListener('mouseenter', e => {
+      tip.innerHTML = el.getAttribute('data-tip');
+      tip.style.opacity = 1;
+    });
+    el.addEventListener('mousemove', e => {
+      const pad = 14;
+      let x = e.clientX + pad, y = e.clientY + pad;
+      const r = tip.getBoundingClientRect();
+      if (x + r.width > innerWidth - 8) x = e.clientX - r.width - pad;
+      if (y + r.height > innerHeight - 8) y = e.clientY - r.height - pad;
+      tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    });
+    el.addEventListener('mouseleave', () => { tip.style.opacity = 0; });
+  });
+}
+
+function table(id, cols, rows) {
+  document.getElementById(id).innerHTML =
+    '<table><thead><tr>' + cols.map(c => `<th>${E(c)}</th>`).join('') +
+    '</tr></thead><tbody>' + rows.map(r =>
+      '<tr>' + r.map(c => `<td>${E(c)}</td>`).join('') + '</tr>').join('') +
+    '</tbody></table>';
+}
+document.querySelectorAll('.toggle').forEach(b => {
+  b.addEventListener('click', () => {
+    const t = document.getElementById(b.dataset.table);
+    const fig = b.closest('.card').querySelector('figure');
+    const show = t.classList.contains('hidden');
+    t.classList.toggle('hidden', !show);
+    fig.classList.toggle('hidden', show);
+    b.textContent = show ? 'Chart' : 'Table';
+  });
+});
+
+/* ---------- header, banner, tiles ---------- */
+const k = DATA.kpi;
+document.getElementById('meta').textContent =
+  `${k.n_listed} listed issues · generated ${DATA.generated}`;
+
+if (DATA.is_synthetic) {
+  document.getElementById('banner').innerHTML =
+    `<div class="banner"><strong>Synthetic data.</strong> Every figure on this page
+     comes from <code>gen_sample_data.py</code>, not from real IPOs. It exists to
+     prove the pipeline runs and the queries detect signals that were planted on
+     purpose. None of it is a finding about any real issue.</div>`;
+}
+
+const tiles = [
+  ['Median listing gain', nice(k.median_gain), `across ${k.n_listed} issues`],
+  ['Listed above issue price', k.hit_rate + '%', 'the hit rate'],
+  ['Median gain, +1 month', nice(k.median_d30), `${k.n_decay} issues tracked`],
+  ['Faded from day one', k.pct_faded + '%', 'worth less at +1 month'],
+  ['Worst debut', nice(k.worst), 'single issue'],
+];
+document.getElementById('tiles').innerHTML = tiles.map(([a, b, c]) =>
+  `<div class="tile"><div class="k">${E(a)}</div><div class="v">${E(b)}</div>
+   <div class="s">${E(c)}</div></div>`).join('');
+
+/* ---------- 1. histogram ---------- */
+(function () {
+  const d = DATA.histogram, W = 540, H = 240,
+        M = { t: 14, r: 14, b: 34, l: 38 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const rawMax = Math.max(...d.map(b => b.n), 1);
+  // round ticks: pick a step from a 1/2/5 ladder so labels are readable
+  const mag = Math.pow(10, Math.floor(Math.log10(rawMax / 4)));
+  const step = [1, 2, 5, 10].map(m => m * mag).find(s => rawMax / s <= 5) || mag * 10;
+  const maxN = Math.ceil(rawMax / step) * step;
+  const bw = iw / d.length;
+  const y = n => M.t + ih - (n / maxN) * ih;
+  let g = '';
+  for (let v = 0; v <= maxN; v += step) {
+    const yy = y(v);
+    g += `<line class="gl" x1="${M.l}" x2="${M.l + iw}" y1="${yy}" y2="${yy}"/>
+          <text class="ax" x="${M.l - 7}" y="${yy + 4}" text-anchor="end">${v}</text>`;
+  }
+  d.forEach((b, i) => {
+    const x = M.l + i * bw + 1.5, w = Math.max(bw - 3, 1);
+    const h = M.t + ih - y(b.n);
+    const col = b.hi <= 0 ? 'var(--neg)' : 'var(--pos)';
+    if (b.n > 0) g += `<rect x="${x}" y="${y(b.n)}" width="${w}" height="${h}"
+        rx="4" fill="${col}" data-tip="<b>${b.lo}% to ${b.hi}%</b><br>${b.n} issues"/>`;
+    if (i % 2 === 0) g += `<text class="ax" x="${x + w / 2}" y="${H - 16}"
+        text-anchor="middle">${b.lo}</text>`;
+  });
+  const zi = d.findIndex(b => b.lo === 0);
+  if (zi >= 0) {
+    const zx = M.l + zi * bw;
+    g += `<line class="bl" x1="${zx}" x2="${zx}" y1="${M.t}" y2="${M.t + ih}"
+           stroke-dasharray="3 3"/>`;
+  }
+  g += `<line class="bl" x1="${M.l}" x2="${M.l + iw}" y1="${M.t + ih}" y2="${M.t + ih}"/>
+        <text class="axl" x="${M.l + iw / 2}" y="${H - 1}" text-anchor="middle">listing gain (%)</text>`;
+  const el = document.getElementById('c-hist');
+  el.innerHTML = svg(W, H, g); bindTips(el);
+  table('t-hist', ['Gain range', 'Issues'],
+        d.map(b => [`${b.lo}% to ${b.hi}%`, b.n]));
+})();
+
+/* ---------- 2. scatter ---------- */
+(function () {
+  const d = DATA.scatter, W = 540, H = 240,
+        M = { t: 14, r: 16, b: 34, l: 40 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const lx = v => Math.log10(Math.max(v, 0.1));
+  const xs = d.map(p => lx(p.sub)), ys = d.map(p => p.gain);
+  const x0 = Math.floor(Math.min(...xs)), x1 = Math.ceil(Math.max(...xs));
+  const y0 = Math.min(0, Math.floor(Math.min(...ys) / 20) * 20);
+  const y1 = Math.ceil(Math.max(...ys) / 20) * 20;
+  const X = v => M.l + (lx(v) - x0) / (x1 - x0) * iw;
+  const Y = v => M.t + ih - (v - y0) / (y1 - y0) * ih;
+  let g = '';
+  for (let v = y0; v <= y1; v += 20) {
+    g += `<line class="gl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(v)}" y2="${Y(v)}"/>
+          <text class="ax" x="${M.l - 7}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  }
+  g += `<line class="bl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  for (let e = x0; e <= x1; e++) {
+    const v = Math.pow(10, e);
+    g += `<text class="ax" x="${X(v)}" y="${H - 16}" text-anchor="middle">${v < 1 ? v : v + 'x'}</text>`;
+  }
+  d.forEach(p => {
+    g += `<circle cx="${X(p.sub)}" cy="${Y(p.gain)}" r="4.5"
+      fill="var(--s1)" fill-opacity="0.72" stroke="var(--surface)" stroke-width="2"
+      data-tip="<b>${E(p.c)}</b><br>${p.sub}x subscribed<br>${nice(p.gain)} on listing"/>`;
+  });
+  g += `<text class="axl" x="${M.l + iw / 2}" y="${H - 1}" text-anchor="middle">total subscription (times, log)</text>`;
+  const el = document.getElementById('c-scatter');
+  el.innerHTML = svg(W, H, g); bindTips(el);
+  table('t-scatter', ['Company', 'Subscription (x)', 'Listing gain'],
+        d.slice().sort((a, b) => b.gain - a.gain)
+         .map(p => [p.c, p.sub, nice(p.gain)]));
+})();
+
+/* ---------- 3. sector bars ---------- */
+(function () {
+  const d = DATA.sectors, rowH = 26, W = 900,
+        M = { t: 8, r: 70, b: 30, l: 200 };
+  const H = M.t + d.length * rowH + M.b;
+  const iw = W - M.l - M.r;
+  const lo = Math.min(0, ...d.map(s => s.median));
+  const hi = Math.max(0, ...d.map(s => s.median));
+  const pad = (hi - lo) * 0.08 || 1;
+  const X = v => M.l + (v - (lo - pad)) / ((hi + pad) - (lo - pad)) * iw;
+  let g = '';
+  const zx = X(0);
+  d.forEach((s, i) => {
+    const yy = M.t + i * rowH, bh = 14, cy = yy + rowH / 2 - bh / 2;
+    const pos = s.median >= 0;
+    const x = pos ? zx : X(s.median), w = Math.max(Math.abs(X(s.median) - zx), 2);
+    g += `<rect x="${x}" y="${cy}" width="${w}" height="${bh}" rx="4"
+        fill="${pos ? 'var(--pos)' : 'var(--neg)'}"
+        data-tip="<b>${E(s.sector)}</b><br>median ${nice(s.median)}<br>${s.n} issues · ${s.pct_pos}% positive"/>`;
+    g += `<text class="ax" x="${M.l - 10}" y="${yy + rowH / 2 + 4}" text-anchor="end">
+            ${E(s.sector)}${s.thin ? ' *' : ''}</text>`;
+    g += `<text class="dl" x="${pos ? x + w + 8 : x - 8}" y="${yy + rowH / 2 + 4}"
+            text-anchor="${pos ? 'start' : 'end'}">${nice(s.median)}</text>`;
+  });
+  g += `<line class="bl" x1="${zx}" x2="${zx}" y1="${M.t}" y2="${M.t + d.length * rowH}"/>
+        <text class="axl" x="${M.l + iw / 2}" y="${H - 6}" text-anchor="middle">
+          median listing gain (%) · * fewer than 8 issues</text>`;
+  const el = document.getElementById('c-sector');
+  el.innerHTML = svg(W, H, g); bindTips(el);
+  table('t-sector', ['Sector', 'Issues', 'Median gain', '% positive'],
+        d.map(s => [s.sector + (s.thin ? ' (thin sample)' : ''), s.n,
+                    nice(s.median), s.pct_pos + '%']));
+})();
+
+/* ---------- 4. decay slope ---------- */
+(function () {
+  const d = DATA.decay, W = 480, H = 240,
+        M = { t: 26, r: 52, b: 40, l: 44 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const vals = d.map(p => p.v);
+  const y1 = Math.ceil(Math.max(...vals, 0) / 5) * 5 + 2;
+  const y0 = Math.min(0, Math.floor(Math.min(...vals) / 5) * 5);
+  const X = i => M.l + (d.length === 1 ? iw / 2 : i / (d.length - 1) * iw);
+  const Y = v => M.t + ih - (v - y0) / (y1 - y0) * ih;
+  let g = '';
+  for (let v = y0; v <= y1; v += 5) {
+    g += `<line class="gl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(v)}" y2="${Y(v)}"/>
+          <text class="ax" x="${M.l - 7}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  }
+  g += `<line class="bl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  g += `<path d="${d.map((p, i) => (i ? 'L' : 'M') + X(i) + ' ' + Y(p.v)).join(' ')}"
+         fill="none" stroke="var(--s1)" stroke-width="2" stroke-linecap="round"/>`;
+  d.forEach((p, i) => {
+    g += `<circle cx="${X(i)}" cy="${Y(p.v)}" r="5" fill="var(--s1)"
+        stroke="var(--surface)" stroke-width="2"
+        data-tip="<b>${E(p.label)}</b><br>median ${nice(p.v)}"/>`;
+    g += `<text class="dl" x="${X(i)}" y="${Y(p.v) - 13}" text-anchor="middle">${nice(p.v)}</text>`;
+    g += `<text class="ax" x="${X(i)}" y="${H - 18}" text-anchor="middle">${E(p.label)}</text>`;
+  });
+  const drop = d[0].v ? (1 - d[d.length - 1].v / d[0].v) * 100 : 0;
+  g += `<text class="axl" x="${M.l + iw / 2}" y="${H - 2}" text-anchor="middle">
+         ${drop > 0 ? Math.round(drop) + '% of the listing gain is gone by month end' : ''}</text>`;
+  const el = document.getElementById('c-decay');
+  el.innerHTML = svg(W, H, g); bindTips(el);
+  table('t-decay', ['Point', 'Median gain'], d.map(p => [p.label, nice(p.v)]));
+})();
+
+/* ---------- 5. quarterly regime ---------- */
+(function () {
+  const d = DATA.quarters, W = 560, H = 250,
+        M = { t: 14, r: 18, b: 44, l: 40 };
+  if (!d.length) return;
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const all = d.flatMap(q => [q.avg, q.regime]).filter(v => v !== null);
+  const y1 = Math.ceil(Math.max(...all, 0) / 10) * 10;
+  const y0 = Math.min(0, Math.floor(Math.min(...all) / 10) * 10);
+  const X = i => M.l + (d.length === 1 ? iw / 2 : i / (d.length - 1) * iw);
+  const Y = v => M.t + ih - (v - y0) / (y1 - y0) * ih;
+  let g = '';
+  for (let v = y0; v <= y1; v += 10) {
+    g += `<line class="gl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(v)}" y2="${Y(v)}"/>
+          <text class="ax" x="${M.l - 7}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  }
+  g += `<line class="bl" x1="${M.l}" x2="${M.l + iw}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  const line = (key, col) => `<path d="${d.map((q, i) =>
+      (i ? 'L' : 'M') + X(i) + ' ' + Y(q[key])).join(' ')}"
+      fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round"/>`;
+  g += line('regime', 'var(--s2)') + line('avg', 'var(--s1)');
+  d.forEach((q, i) => {
+    g += `<circle cx="${X(i)}" cy="${Y(q.avg)}" r="4" fill="var(--s1)"
+        stroke="var(--surface)" stroke-width="2"
+        data-tip="<b>${E(q.q)}</b><br>${q.n} issues<br>avg ${nice(q.avg)}<br>regime ${nice(q.regime)}"/>`;
+    if (i % 3 === 0) g += `<text class="ax" x="${X(i)}" y="${H - 22}"
+        text-anchor="middle">${E(q.q.slice(0, 7))}</text>`;
+  });
+  g += `<text class="axl" x="${M.l + iw / 2}" y="${H - 4}" text-anchor="middle">listing quarter · gain (%)</text>`;
+  const el = document.getElementById('c-quarter');
+  el.innerHTML = svg(W, H, g); bindTips(el);
+  table('t-quarter', ['Quarter', 'Issues', 'Avg gain', 'Regime'],
+        d.map(q => [q.q, q.n, nice(q.avg), nice(q.regime)]));
+})();
+
+/* ---------- footer ---------- */
+document.getElementById('foot').innerHTML =
+  `Grey market premium, where used anywhere in this project, is <strong>unofficial</strong>
+   — an unregulated indicator, not an exchange figure.<br>
+   Analysis only. Historical listing patterns do not predict any future issue.<br>
+   Built from <code>sql/02_views.sql</code> and <code>sql/03_analysis.sql</code>;
+   rebuild with <code>python scripts/build_dashboard.py</code>.`;
+</script>
+</body>
+</html>

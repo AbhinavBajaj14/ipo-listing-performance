@@ -1,0 +1,21 @@
+# Scraped source data — personal research use only, never redistributed.
+data/raw/
+data/processed/
+
+# The synthetic sample IS committed: we generated it, so the repo is
+# runnable by anyone without redistributing a third party's dataset.
+!data/sample/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
