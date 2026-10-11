@@ -245,6 +245,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--report", action="store_true",
                     help="print what parsed and what didn't; write nothing")
+    ap.add_argument("--list", action="store_true", dest="listing",
+                    help="one line per cached page: id, dates, prices, status")
     ap.add_argument("--from-year", type=int, default=2021)
     ap.add_argument("--include-sme", action="store_true")
     ap.add_argument("--limit", type=int, default=0)
@@ -261,6 +263,27 @@ def main() -> int:
 
     print(f"Parsing {len(files)} cached pages\n")
     recs = [parse_one(p) for p in files]
+
+    if a.listing:
+        print(f"{'id':>5}  {'company':30} {'exchange':12} {'listed':10} "
+              f"{'price':>7} {'open':>8} {'sub':>7}  why not")
+        print("-" * 104)
+        for r in sorted(recs, key=lambda r: -int(r["ipo_id"])):
+            sub = r["subscription"].get("Total")
+            print(f"{r['ipo_id']:>5}  {str(r['company'])[:30]:30} "
+                  f"{str(r['exchange'] or '-')[:12]:12} "
+                  f"{str(r['listing_date'] or '-'):10} "
+                  f"{'' if r['issue_price'] is None else r['issue_price']:>7} "
+                  f"{'' if r['listing_open'] is None else r['listing_open']:>8} "
+                  f"{'' if sub is None else sub:>7}  "
+                  f"{'; '.join(r['problems'])[:30]}")
+        listed = [r for r in recs if r["listing_open"]]
+        if listed:
+            ds = sorted(r["listing_date"] for r in listed if r["listing_date"])
+            if ds:
+                print(f"\n  listing dates span {ds[0]} to {ds[-1]}")
+        print(f"  mainboard: {sum(1 for r in recs if not r['is_sme'])} / {len(recs)}")
+        return 0
 
     if a.report:
         from collections import Counter
