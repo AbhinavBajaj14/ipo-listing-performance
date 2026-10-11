@@ -147,8 +147,18 @@ def main() -> int:
         "quarters": quarters,
     }
 
-    html = TEMPLATE.read_text(encoding="utf-8").replace(
-        "/*__DATA__*/null", json.dumps(data, separators=(",", ":")))
+    # The synthetic-data warning is written into the static HTML, not
+    # injected by script: a caveat that only appears if JavaScript runs
+    # is a caveat that can silently fail to appear.
+    banner = ("""<div class="banner"><strong>Synthetic data.</strong> Every figure on
+     this page comes from <code>gen_sample_data.py</code>, not from real IPOs. It
+     exists to prove the pipeline runs and that the queries detect signals planted
+     on purpose. None of it is a finding about any real issue.</div>"""
+              if data["is_synthetic"] else "")
+
+    html = (TEMPLATE.read_text(encoding="utf-8")
+            .replace("<!--__BANNER__-->", banner)
+            .replace("/*__DATA__*/null", json.dumps(data, separators=(",", ":"))))
     OUT.write_text(html, encoding="utf-8")
     print(f"Wrote {OUT}  ({OUT.stat().st_size // 1024} KB)")
     print(f"  listed={data['kpi']['n_listed']} "

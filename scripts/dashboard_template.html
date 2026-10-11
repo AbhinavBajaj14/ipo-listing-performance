@@ -138,7 +138,8 @@
     <div class="meta" id="meta"></div>
   </header>
 
-  <div id="banner"></div>
+  <!--__BANNER__-->
+  <noscript><div class="banner">This dashboard draws its charts with JavaScript. With JavaScript off you will see headings but no data.</div></noscript>
   <div class="tiles" id="tiles"></div>
 
   <div class="grid two">
@@ -276,14 +277,6 @@ document.querySelectorAll('.toggle').forEach(b => {
 const k = DATA.kpi;
 document.getElementById('meta').textContent =
   `${k.n_listed} listed issues · generated ${DATA.generated}`;
-
-if (DATA.is_synthetic) {
-  document.getElementById('banner').innerHTML =
-    `<div class="banner"><strong>Synthetic data.</strong> Every figure on this page
-     comes from <code>gen_sample_data.py</code>, not from real IPOs. It exists to
-     prove the pipeline runs and the queries detect signals that were planted on
-     purpose. None of it is a finding about any real issue.</div>`;
-}
 
 const tiles = [
   ['Median listing gain', nice(k.median_gain), `across ${k.n_listed} issues`],
