@@ -31,6 +31,8 @@ HTML_DIR = ROOT / "data" / "raw" / "html"
 OUT_DIR = ROOT / "data" / "processed"
 
 MONEY = re.compile(r"[₹,\s]|Rs\.?|per share", re.I)
+# "33,84,000 shares (agg. up to ₹40 Cr)" -> 40.0, not 3384000
+CRORE = re.compile(r"₹\s*([\d,]+(?:\.\d+)?)\s*(?:Cr|Crore)", re.I)
 NUMBER = re.compile(r"-?\d+(?:\.\d+)?")
 DATE_FMTS = ("%a, %b %d, %Y", "%b %d, %Y", "%d %b %Y", "%Y-%m-%d", "%d-%m-%Y")
 
@@ -55,6 +57,57 @@ def date(text) -> str | None:
         return pd.to_datetime(s, dayfirst=True).date().isoformat()
     except Exception:
         return None
+
+
+def crore(text) -> float | None:
+    """The rupee-crore figure, ignoring any share count in front of it."""
+    if text is None or (isinstance(text, float) and pd.isna(text)):
+        return None
+    m = CRORE.search(str(text))
+    return float(m.group(1).replace(",", "")) if m else None
+
+
+def date_range(text) -> tuple[str | None, str | None]:
+    """'26 to 28 Nov, 2025' -> ('2025-11-26', '2025-11-28').
+
+    The open side is often just a day number, and the range can cross a
+    month boundary ('28 Nov to 2 Dec'), so the close date is parsed first
+    and the open side borrows whatever it is missing from it.
+    """
+    if not text:
+        return (None, None)
+    s = re.sub(r"\s+", " ", str(text)).strip()
+    parts = re.split(r"\s+to\s+|\s*[–—]\s*|\s+-\s+", s, maxsplit=1)
+    if len(parts) != 2:
+        d = date(s)
+        return (d, d)
+    left, right = parts[0].strip().rstrip(","), parts[1].strip()
+
+    close = date(right)
+    if not close:
+        return (None, None)
+    cd = pd.Timestamp(close)
+
+    opened = None
+    if re.search(r"[A-Za-z]", left):                  # has a month name
+        if re.search(r"\d{4}", left):                 # ...and a year
+            opened = date(left)
+        else:                                         # borrow the close year
+            opened = date(f"{left} {cd.year}")
+            if opened and opened > close:             # range crossed New Year
+                opened = date(f"{left} {cd.year - 1}")
+    elif re.fullmatch(r"\d{1,2}", left):              # bare day number
+        try:
+            opened = cd.replace(day=int(left)).date().isoformat()
+        except ValueError:
+            opened = None
+        if opened and opened > close:                 # range crossed a month
+            prev_month_end = cd.replace(day=1) - pd.Timedelta(days=1)
+            try:
+                opened = prev_month_end.replace(day=int(left)).date().isoformat()
+            except ValueError:
+                opened = None
+    return (opened, close)
 
 
 def kv_from(tables: list[pd.DataFrame]) -> dict[str, str]:
@@ -108,11 +161,14 @@ def parse_one(path: Path) -> dict:
                     return val
         return None
 
-    listed_on = pick("Listed on", "Listing At", "Listing on")
-    rec["listed_on"] = listed_on
-    rec["is_sme"] = bool(listed_on and re.search(r"\bSME\b|EMERGE|\bSM\b", listed_on, re.I))
+    # "Listing At" is the exchange ("BSE SME", "BSE, NSE").
+    # "Listed on" is a DATE. Reading the date for the exchange silently
+    # marks every SME issue as mainboard, so keep them apart.
+    exchange = pick("Listing At", "Listed At", "Exchange")
+    rec["exchange"] = exchange
+    rec["is_sme"] = bool(exchange and re.search(r"\bSME\b|EMERGE|\bSM\b", exchange, re.I))
 
-    rec["issue_price"] = num(pick("Issue Price"))
+    rec["issue_price"] = num(pick("Final Issue Price", "Issue Price"))
     rec["price_band_low"], rec["price_band_high"] = (None, None)
     band = pick("Price Band")
     if band:
@@ -120,13 +176,19 @@ def parse_one(path: Path) -> dict:
         if len(vals) >= 2:
             rec["price_band_low"], rec["price_band_high"] = min(vals), max(vals)
     rec["lot_size"] = num(pick("Lot Size", "Market Lot"))
-    rec["issue_size_cr"] = num(pick("Total Issue Size", "Issue Size"))
-    rec["fresh_issue_cr"] = num(pick("Fresh Issue"))
-    rec["ofs_cr"] = num(pick("Offer for Sale"))
+    # these labels read "<N> shares (agg. up to ₹<X> Cr)" — we want X
+    rec["issue_size_cr"] = crore(pick("Total Issue Size", "Issue Size"))
+    rec["fresh_issue_cr"] = crore(pick("Fresh Issue"))
+    rec["ofs_cr"] = crore(pick("Offer for Sale"))
 
-    rec["issue_open"] = date(pick("IPO Open Date", "Open Date", "Opening Date"))
-    rec["issue_close"] = date(pick("IPO Close Date", "Close Date", "Closing Date"))
-    rec["listing_date"] = date(pick("Listing Date"))
+    # open and close arrive as one field: "IPO Date = 26 to 28 Nov, 2025"
+    rec["issue_open"], rec["issue_close"] = date_range(
+        pick("IPO Date", "Issue Date", "Bidding Date"))
+    if rec["issue_open"] is None:
+        rec["issue_open"] = date(pick("IPO Open Date", "Open Date"))
+    if rec["issue_close"] is None:
+        rec["issue_close"] = date(pick("IPO Close Date", "Close Date"))
+    rec["listing_date"] = date(pick("Listed on", "Listing Date", "Listing on"))
 
     # subscription: Category | Subscription (times)
     subs = {}
