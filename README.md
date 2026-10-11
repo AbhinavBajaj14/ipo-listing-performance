@@ -92,7 +92,7 @@ python scripts/load_to_postgres.py --source data/processed
 
 # 4. analysis and dashboard
 psql -d ipo_analysis -f sql/03_analysis.sql
-python scripts/build_dashboard.py         # -> docs/dashboard.html
+python scripts/build_dashboard.py         # -> docs/index.html
 ```
 
 ---
@@ -108,7 +108,7 @@ scripts/parse_ipos.py           cached HTML -> CSV
 scripts/load_to_postgres.py     CSV -> database, idempotent
 scripts/gen_sample_data.py      synthetic fixture with planted signals
 scripts/build_dashboard.py      database -> self-contained HTML
-docs/dashboard.html             open in any browser, no server needed
+docs/index.html                 open in any browser, or serve via GitHub Pages
 ```
 
 ---

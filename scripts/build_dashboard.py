@@ -21,7 +21,7 @@ from pathlib import Path
 
 import psycopg2
 
-OUT = Path(__file__).resolve().parent.parent / "docs" / "dashboard.html"
+OUT = Path(__file__).resolve().parent.parent / "docs" / "index.html"
 TEMPLATE = Path(__file__).resolve().parent / "dashboard_template.html"
 
 Q_KPI = """
