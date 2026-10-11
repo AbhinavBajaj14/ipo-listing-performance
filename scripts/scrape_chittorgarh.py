@@ -175,6 +175,8 @@ def cmd_fetch(args: argparse.Namespace) -> int:
 
     if args.min_id:
         records = [r for r in records if int(r["ipo_id"]) >= args.min_id]
+    if args.max_id:
+        records = [r for r in records if int(r["ipo_id"]) <= args.max_id]
 
     remaining = [r for r in records
                  if not (HTML_DIR / f"{r['ipo_id']}.html").exists()]
@@ -252,6 +254,9 @@ def main() -> int:
                    help="stop after N pages (use a small number first)")
     f.add_argument("--min-id", type=int, default=0, dest="min_id",
                    help="ignore IPO ids below this (bounds the job by rough date)")
+    f.add_argument("--max-id", type=int, default=0, dest="max_id",
+                   help="ignore IPO ids above this; ids run roughly in time order,\n"
+                        "so a low --max-id reaches older, already-listed issues")
 
     i = sub.add_parser("inspect", help="dump all tables on one page")
     i.add_argument("target", help="full url, or a cached ipo_id")

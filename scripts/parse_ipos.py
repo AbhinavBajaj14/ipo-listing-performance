@@ -98,6 +98,8 @@ def parse_one(path: Path) -> dict:
 
     kv = kv_from(tables)
     rec["_kv_keys"] = len(kv)
+    rec["_kv"] = kv
+    rec["_headers"] = [list(t.columns) for t in tables]
 
     def pick(*names):
         for n in names:
@@ -212,10 +214,21 @@ def main() -> int:
         print("\n  problems:")
         for k, v in probs.most_common():
             print(f"    {v:>5}  {k}")
-        print("\n  first record:")
-        for k, v in list(recs[0].items()):
-            if k != "problems":
+        # pick a record that actually has content to show
+        best = max(recs, key=lambda r: (bool(r["listing_open"]),
+                                        bool(r["subscription"]), r["_kv_keys"]))
+        print(f"\n  sample record (ipo_id {best['ipo_id']}):")
+        for k, v in best.items():
+            if k not in ("problems", "_kv", "_headers"):
                 print(f"    {k:18} {v}")
+
+        print(f"\n  ---- the {len(best['_kv'])} field labels on that page ----")
+        for key, val in best["_kv"].items():
+            print(f"    {key[:40]:42} = {str(val)[:46]}")
+
+        print("\n  ---- every table's column headers on that page ----")
+        for i, h in enumerate(best["_headers"]):
+            print(f"    [{i:>2}] {str(h)[:110]}")
         return 0
 
     keep = [r for r in recs
